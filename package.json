@@ -1,0 +1,62 @@
+{
+  "name": "peppymeter",
+  "version": "0.1.0-dev",
+  "description": "Installs the PeppyMeter software VU meter (extended by 2aCD).",
+  "main": "./dist/index.js",
+  "scripts": {
+    "build": "rm -rf dist && npx tsc --build src && bash fixup.sh",
+    "build:uiconf": "node ./scripts/buildUIConfigSchema.js > ./src/lib/config/UIConfigSchema.ts",
+    "lint": "npx eslint ./src",
+    "lint:fix": "npx eslint ./src --fix"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/patrickkfkan/volumio-peppymeter.git"
+  },
+  "author": "2aCD (original work), Patrick Kan",
+  "license": "GPL-3.0",
+  "volumio_info": {
+    "prettyName": "PeppyMeter",
+    "plugin_type": "user_interface",
+    "os": [
+      "buster"
+    ],
+    "icon": "fa-tachometer",
+    "boot_priority": 10,
+    "details": "Installs the PeppyMeter software VU meter, extended by 2aCD to display now playing data. For ease of configuration, also install: Audio Interface -> Peppy ALSA Pipe.",
+    "changelog": "",
+    "architectures": [
+      "amd64",
+      "armhf"
+    ]
+  },
+  "engines": {
+    "node": ">=14",
+    "volumio": ">=3"
+  },
+  "devDependencies": {
+    "@types/deep-equal": "^1.0.2",
+    "@types/fs-extra": "^8.1.2",
+    "@types/md5": "^2.3.2",
+    "@types/node": "^14.18.38",
+    "@types/socket.io-client": "^1.4.36",
+    "@types/string-format": "^2.0.0",
+    "@typescript-eslint/eslint-plugin": "^5.56.0",
+    "@typescript-eslint/parser": "^5.56.0",
+    "eslint": "^8.36.0",
+    "typescript": "^4.9.5",
+    "winston": "^3.8.2"
+  },
+  "dependencies": {
+    "chokidar": "^3.5.3",
+    "configparser": "^0.3.10",
+    "deep-equal": "^2.2.2",
+    "image-size": "^1.0.2",
+    "kew": "^0.7.0",
+    "pidtree": "^0.6.0",
+    "save": "^2.9.0",
+    "socket.io-client": "^1.7.4",
+    "string-format": "^2.0.0",
+    "v-conf": "^1.4.2"
+  }
+}

@@ -1,0 +1,123 @@
+{
+  "page": {
+    "label": "TRANSLATE.PEPPYMETER_CONFIGURATION"
+  },
+  "sections": [
+    {
+      "id": "section_meter_settings",
+      "element": "section",
+      "label": "TRANSLATE.PEPPYMETER_METER_SETTINGS",
+      "icon": "fa-tachometer",
+      "onSave": {
+        "type": "controller",
+        "endpoint": "user_interface/peppymeter",
+        "method": "configSaveMeterSettings"
+      },
+      "saveButton": {
+        "label": "TRANSLATE.PEPPYMETER_SAVE",
+        "data": [
+          "startDelay",
+          "template",
+          "meter",
+          "randomInterval",
+          "useCache",
+          "smoothBufferSize",
+          "mouseSupport",
+          "font",
+          "fifoPathType",
+          "fifoPath"
+        ]
+      },
+      "content": [
+        {
+          "id": "startDelay",
+          "element": "input",
+          "type": "number",
+          "label": "TRANSLATE.PEPPYMETER_START_DELAY",
+          "value": 3
+        },
+        {
+          "id": "template",
+          "element": "select",
+          "label": "TRANSLATE.PEPPYMETER_TEMPLATE",
+          "value": {
+            "value": "", 
+            "label": ""
+          },
+          "options": [
+            {
+              "value": "", 
+              "label": ""
+            }
+          ]
+        },
+        {
+          "id": "randomInterval",
+          "element": "input",
+          "type": "number",
+          "label": "TRANSLATE.PEPPYMETER_RANDOM_INTERVAL",
+          "value": 60
+        },
+        {
+          "id": "useCache",
+          "element": "switch",
+          "label": "TRANSLATE.PEPPYMETER_USE_CACHE",
+          "value": true
+        },
+        {
+          "id": "smoothBufferSize",
+          "element": "input",
+          "type": "number",
+          "label": "TRANSLATE.PEPPYMETER_SMOOTH_BUFFER_SIZE",
+          "value": 8
+        },
+        {
+          "id": "mouseSupport",
+          "element": "switch",
+          "label": "TRANSLATE.PEPPYMETER_MOUSE_SUPPORT",
+          "value": true
+        },
+        {
+          "id": "font",
+          "element": "select",
+          "label": "TRANSLATE.PEPPYMETER_FONT",
+          "value": {
+            "value": "",
+            "label": ""
+          },
+          "options": []
+        },
+        {
+          "id": "fifoPathType",
+          "element": "select",
+          "label": "TRANSLATE.PEPPYMETER_FIFO_PATH_TYPE",
+          "value": {
+            "value": "peppyAlsaPlugin",
+            "label": "TRANSLATE.PEPPYMETER_FIFO_PATH_TYPE_PAP"
+          },
+          "options": [
+            {
+              "value": "peppyAlsaPlugin",
+              "label": "TRANSLATE.PEPPYMETER_FIFO_PATH_TYPE_PAP"
+            },
+            {
+              "value": "manual",
+              "label": "TRANSLATE.PEPPYMETER_FIFO_PATH_TYPE_MANUAL"
+            }
+          ]
+        },
+        {
+          "id": "fifoPath",
+          "element": "input",
+          "type": "text",
+          "label": "TRANSLATE.PEPPYMETER_FIFO_PATH",
+          "value": "",
+          "visibleIf": {
+            "field": "fifoPathType",
+            "value": "manual"
+          }
+        }
+      ]
+    }
+  ]
+}

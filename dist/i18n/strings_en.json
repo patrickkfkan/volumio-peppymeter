@@ -1,0 +1,23 @@
+{
+  "PEPPYMETER_CONFIGURATION": "PeppyMeter Configuration",
+  "PEPPYMETER_METER_SETTINGS": "Meter Settings",
+  "PEPPYMETER_SAVE": "Save",
+  "PEPPYMETER_SETTINGS_SAVED": "Settings saved",
+  "PEPPYMETER_START_DELAY": "Start Delay",
+  "PEPPYMETER_TEMPLATE": "Template Folder",
+  "PEPPYMETER_METER": "Meter",
+  "PEPPYMETER_RANDOM": "Random",
+  "PEPPYMETER_RANDOM_INTERVAL": "(Random) Meter Change Interval",
+  "PEPPYMETER_USE_CACHE": "Needle Cache",
+  "PEPPYMETER_SMOOTH_BUFFER_SIZE": "Smooth Buffer Size",
+  "PEPPYMETER_MOUSE_SUPPORT": "Mouse Support",
+  "PEPPYMETER_FONT": "Font",
+  "PEPPYMETER_FIFO_PATH_TYPE": "FIFO Path",
+  "PEPPYMETER_FIFO_PATH_TYPE_PAP": "Obtain from Peppy ALSA Pipe plugin",
+  "PEPPYMETER_FIFO_PATH_TYPE_MANUAL": "Manual",
+  "PEPPYMETER_FIFO_PATH": "- Path",
+  "PEPPYMETER_METER_MONITOR_UPDATING": "Meter templates are being updated; list might not be conclusive.",
+  "PEPPYMETER_ERR_INVALID_START_DELAY": "Start delay must be 0 or greater",
+  "PEPPYMETER_ERR_INVALID_METER": "Choose a valid meter",
+  "PEPPYMETER_ERR_START": "Could not start PeppyMeter: {}"
+}
