@@ -13,12 +13,12 @@ PEPPYMETER_RUN_SCRIPT="/data/plugins/user_interface/peppymeter/dist/peppymeter/r
 # Install Python packages
 echo "Installing Python packages..."
 sudo apt-get -y install python3-pip
-sudo pip3 install pygame
+sudo apt-get -y install python3-pygame
 sudo pip3 install socketIO-client
 sudo pip3 install cairosvg
 
 # Install fonts
-echo "Installing fonts - this could take some time..."
+echo "Installing fonts..."
 sudo apt-get install -y \
     fonts-tlwg-laksaman-ttf \
     fonts-noto-cjk \
@@ -28,10 +28,10 @@ sudo apt-get install -y \
 echo "Creating user directories (if not exist)..."
 mkdir -p "${PLUGIN_USER_DIR}"
 chown volumio:volumio "${PLUGIN_USER_DIR}"
-chmod 666 "${PLUGIN_USER_DIR}"
+chmod 777 "${PLUGIN_USER_DIR}"
 mkdir -p "${METER_TEMPLATE_DIR}"
 chown volumio:volumio "${METER_TEMPLATE_DIR}"
-chmod 666 "${METER_TEMPLATE_DIR}"
+chmod 777 "${METER_TEMPLATE_DIR}"
 
 # Finalize
 chmod +x "${PEPPYMETER_RUN_SCRIPT}"
