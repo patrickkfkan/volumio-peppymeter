@@ -13,17 +13,17 @@ var __classPrivateFieldGet = (this && this.__classPrivateFieldGet) || function (
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
-var _a, _PeppyMeterConfig_configTmpl, _PeppyMeterConfig_configValues, _PeppyMeterConfig_validationErrors, _PeppyMeterConfig_lastCommitedValues, _PeppyMeterConfig_assertConfigTmplLoaded, _PeppyMeterConfig_getDimensionsFromFiles, _PeppyMeterConfig_getFIFOPathFromPeppyAlsaPipePlugin;
+var _a, _PeppyMeterConfig_configTmpl, _PeppyMeterConfig_configValues, _PeppyMeterConfig_validationErrors, _PeppyMeterConfig_lastCommitedValues, _PeppyMeterConfig_assertConfigTmplLoaded, _PeppyMeterConfig_getFIFOPathFromPeppyAlsaPipePlugin;
 Object.defineProperty(exports, "__esModule", { value: true });
 const fs_1 = require("fs");
 const System_1 = require("../utils/System");
-const image_size_1 = __importDefault(require("image-size"));
 const deep_equal_1 = __importDefault(require("deep-equal"));
 const PeppyMeterContext_1 = __importDefault(require("../PeppyMeterContext"));
 const path_1 = __importDefault(require("path"));
 const Constants_1 = require("../utils/Constants");
 const PeppyAlsaPipePluginListener_1 = require("./PeppyAlsaPipePluginListener");
 const FontHelper_1 = require("../utils/FontHelper");
+const MeterTemplate_1 = require("../utils/MeterTemplate");
 const CONFIG_KEYS = [
     'template',
     'meter',
@@ -165,9 +165,7 @@ class PeppyMeterConfig {
             screenSize.height = screenSizeConfig.height;
         }
         else {
-            const folder = path_1.default.resolve(Constants_1.METER_TEMPLATE_DIR, checkedFieldValues['template']);
-            const files = (0, fs_1.readdirSync)(folder);
-            const dimensions = __classPrivateFieldGet(this, _a, "m", _PeppyMeterConfig_getDimensionsFromFiles).call(this, folder, files, ['-ext.', '_ext.', '-bgr.', '_bgr.']);
+            const dimensions = (0, MeterTemplate_1.getMeterScreenSize)(checkedFieldValues['template'], checkedFieldValues['meter'].toString());
             if (!dimensions || !dimensions.width || !dimensions.height) {
                 throw Error(`Could not obtain valid screen dimensions from ${checkedFieldValues['template']}`);
             }
@@ -248,29 +246,6 @@ _a = PeppyMeterConfig, _PeppyMeterConfig_assertConfigTmplLoaded = function _Pepp
         throw Error('PeppyMeter config template not loaded');
     }
     return true;
-}, _PeppyMeterConfig_getDimensionsFromFiles = function _PeppyMeterConfig_getDimensionsFromFiles(folder, files, pattern) {
-    if (Array.isArray(pattern)) {
-        const patterns = [...pattern];
-        let dimensions = null;
-        while (!dimensions && patterns.length > 0) {
-            const p = patterns.shift();
-            if (p) {
-                dimensions = __classPrivateFieldGet(this, _a, "m", _PeppyMeterConfig_getDimensionsFromFiles).call(this, folder, files, p);
-            }
-        }
-        return dimensions;
-    }
-    let dimensions = null;
-    for (const file of files) {
-        if (file.indexOf(pattern) >= 0) {
-            dimensions = (0, image_size_1.default)(path_1.default.resolve(folder, file));
-            if (dimensions.width && dimensions.height) {
-                break;
-            }
-            dimensions = null;
-        }
-    }
-    return dimensions;
 }, _PeppyMeterConfig_getFIFOPathFromPeppyAlsaPipePlugin = function _PeppyMeterConfig_getFIFOPathFromPeppyAlsaPipePlugin() {
     return PeppyAlsaPipePluginListener_1.PeppyAlsaPipePluginListener.getFIFOPath();
 };

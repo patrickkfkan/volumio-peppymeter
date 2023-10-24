@@ -1,6 +1,5 @@
-import { readFileSync, readdirSync, writeFileSync } from 'fs';
+import { readFileSync, writeFileSync } from 'fs';
 import { dirExists, fifoExists, fileExists } from '../utils/System';
-import imageSize from 'image-size';
 import deepEqual from 'deep-equal';
 import pm from '../PeppyMeterContext';
 import path from 'path';
@@ -8,6 +7,7 @@ import { FIFOPathConfig, PluginConfigSchema, ScreenSizeConfig } from './PluginCo
 import { METER_TEMPLATE_DIR, PEPPYMETER_CONFIG_FILE, PEPPYMETER_CONFIG_TEMPLATE_FILE } from '../utils/Constants';
 import { PeppyAlsaPipePluginListener } from './PeppyAlsaPipePluginListener';
 import { FontHelper } from '../utils/FontHelper';
+import { getMeterScreenSize } from '../utils/MeterTemplate';
 
 type ConfigKey =
   'template' |
@@ -44,7 +44,7 @@ interface ConfigValues {
   fifoPath: PluginConfigSchema['fifoPath']['defaultValue']
 }
 
-interface Dimensions {
+export interface Dimensions {
   width?: number;
   height?: number;
 }
@@ -189,32 +189,6 @@ export default class PeppyMeterConfig {
     }
   }
 
-  static #getDimensionsFromFiles(folder: string, files: string[], pattern: string | string[]): Dimensions | null {
-    if (Array.isArray(pattern)) {
-      const patterns = [ ...pattern ];
-      let dimensions: Dimensions | null = null;
-      while (!dimensions && patterns.length > 0) {
-        const p = patterns.shift();
-        if (p) {
-          dimensions = this.#getDimensionsFromFiles(folder, files, p);
-        }
-      }
-      return dimensions;
-    }
-
-    let dimensions: Dimensions | null = null;
-    for (const file of files) {
-      if (file.indexOf(pattern) >= 0) {
-        dimensions = imageSize(path.resolve(folder, file));
-        if (dimensions.width && dimensions.height) {
-          break;
-        }
-        dimensions = null;
-      }
-    }
-    return dimensions;
-  }
-
   static commit(dryRun = false) {
     this.#assertConfigTmplLoaded();
 
@@ -247,9 +221,7 @@ export default class PeppyMeterConfig {
       screenSize.height = screenSizeConfig.height;
     }
     else {
-      const folder = path.resolve(METER_TEMPLATE_DIR, checkedFieldValues['template']);
-      const files = readdirSync(folder);
-      const dimensions = this.#getDimensionsFromFiles(folder, files, [ '-ext.', '_ext.', '-bgr.', '_bgr.' ]);
+      const dimensions = getMeterScreenSize(checkedFieldValues['template'], checkedFieldValues['meter'].toString());
       if (!dimensions || !dimensions.width || !dimensions.height) {
         throw Error(`Could not obtain valid screen dimensions from ${checkedFieldValues['template']}`);
       }

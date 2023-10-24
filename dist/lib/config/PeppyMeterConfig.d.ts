@@ -11,6 +11,10 @@ interface ConfigValues {
     font: PluginConfigSchema['font']['defaultValue'];
     fifoPath: PluginConfigSchema['fifoPath']['defaultValue'];
 }
+export interface Dimensions {
+    width?: number;
+    height?: number;
+}
 export default class PeppyMeterConfig {
     #private;
     static load(): {

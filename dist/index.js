@@ -173,8 +173,8 @@ class ControllerPeppyAlsaPipe {
             }
             if (!validate) {
                 PeppyMeterContext_1.default.toast('error', PeppyMeterContext_1.default.getI18n('PEPPYMETER_ERR_INVALID_LIST_METERS', invalidEntry ? ` (${invalidEntry})` : ''));
+                return;
             }
-            return;
         }
         try {
             PeppyMeterConfig_1.default.set('meter', meterValue);

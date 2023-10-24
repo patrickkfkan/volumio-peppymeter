@@ -346,8 +346,8 @@ class ControllerPeppyAlsaPipe {
       }
       if (!validate) {
         pm.toast('error', pm.getI18n('PEPPYMETER_ERR_INVALID_LIST_METERS', invalidEntry ? ` (${invalidEntry})` : ''));
+        return;
       }
-      return;
     }
 
     try {
