@@ -1,7 +1,7 @@
 export interface PeppyMeterRestartOptions {
     policy?: 'always' | 'configChanged';
 }
-export default class PeppyMeterManager {
+export default class PeppyMeter {
     #private;
     static enable(): void;
     static disable(): Promise<void>;

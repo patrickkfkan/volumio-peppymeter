@@ -30,8 +30,9 @@ export interface FontDef extends FontConfig {
 export interface PluginConfigSchema {
   startDelay: PluginConfigSchemaEntry<number>;
   template: PluginConfigSchemaEntry<string>;
+  meterType: PluginConfigSchemaEntry<'random' | 'list' | 'single'>;
   meter: PluginConfigSchemaEntry<'random' | String>;
-  randomInterval: PluginConfigSchemaEntry<number>;
+  changeInterval: PluginConfigSchemaEntry<number>;
   useCache: PluginConfigSchemaEntry<boolean>;
   smoothBufferSize: PluginConfigSchemaEntry<number>;
   mouseSupport: PluginConfigSchemaEntry<boolean>;
@@ -47,8 +48,9 @@ const defaultFontConfig: FontConfig = {
 export const PLUGIN_CONFIG_SCHEMA: PluginConfigSchema = {
   startDelay: { defaultValue: 3, json: false },
   template: { defaultValue: '', json: false },
+  meterType: { defaultValue: 'random', json: false },
   meter: { defaultValue: 'random', json: false},
-  randomInterval: { defaultValue: 60, json: false},
+  changeInterval: { defaultValue: 60, json: false},
   useCache: { defaultValue: false, json: false},
   smoothBufferSize: { defaultValue: 8, json: false},
   mouseSupport: { defaultValue: true, json: false },

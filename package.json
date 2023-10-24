@@ -48,7 +48,6 @@
     "winston": "^3.8.2"
   },
   "dependencies": {
-    "chokidar": "^3.5.3",
     "configparser": "^0.3.10",
     "deep-equal": "^2.2.2",
     "image-size": "^1.0.2",

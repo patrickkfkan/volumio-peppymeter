@@ -35,7 +35,7 @@ interface PlayerState {
 
 const HOST = 'http://localhost:3000';
 
-export default class PeppyMeterManager {
+export default class PeppyMeter {
 
   static #socket: SocketIOClient.Socket | null = null;
   static #lastPlayerState: PlayerState | null = null;

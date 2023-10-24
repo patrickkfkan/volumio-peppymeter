@@ -12,7 +12,7 @@ import { FontHelper } from '../utils/FontHelper';
 type ConfigKey =
   'template' |
   'meter' |
-  'randomInterval' |
+  'changeInterval' |
   'useCache' |
   'smoothBufferSize' |
   'mouseSupport' |
@@ -24,7 +24,7 @@ type ConfigKey =
 const CONFIG_KEYS: Array<ConfigKey> = [
   'template',
   'meter',
-  'randomInterval',
+  'changeInterval',
   'useCache',
   'smoothBufferSize',
   'mouseSupport',
@@ -37,7 +37,7 @@ const CONFIG_KEYS: Array<ConfigKey> = [
 interface ConfigValues {
   template: PluginConfigSchema['template']['defaultValue'],
   meter: PluginConfigSchema['meter']['defaultValue'],
-  randomInterval: PluginConfigSchema['randomInterval']['defaultValue'],
+  changeInterval: PluginConfigSchema['changeInterval']['defaultValue'],
   useCache: PluginConfigSchema['useCache']['defaultValue'],
   smoothBufferSize: PluginConfigSchema['smoothBufferSize']['defaultValue'],
   mouseSupport: PluginConfigSchema['mouseSupport']['defaultValue'],
@@ -55,7 +55,7 @@ interface Dimensions {
 interface CommitValues {
   template: string;
   meter: string;
-  randomInterval: number;
+  changeInterval: number;
   screenWidth: number;
   screenHeight: number;
   useCache: boolean;
@@ -71,7 +71,7 @@ interface CommitValues {
 const CONFIG_TMPL_KEY_MAP: Record<keyof CommitValues, string> = {
   template: 'TEMPLATE',
   meter: 'METER',
-  randomInterval: 'RANDOM_INTERVAL',
+  changeInterval: 'RANDOM_INTERVAL',
   screenWidth: 'SCREEN_WIDTH',
   screenHeight: 'SCREEN_HEIGHT',
   useCache: 'USE_CACHE',
@@ -102,7 +102,7 @@ export default class PeppyMeterConfig {
     this.#assertConfigTmplLoaded();
     this.set('template', pm.getConfigValue('template'), true);
     this.set('meter', pm.getConfigValue('meter'), true);
-    this.set('randomInterval', pm.getConfigValue('randomInterval'), true);
+    this.set('changeInterval', pm.getConfigValue('changeInterval'), true);
     this.set('useCache', pm.getConfigValue('useCache'), true);
     this.set('smoothBufferSize', pm.getConfigValue('smoothBufferSize'), true);
     this.set('mouseSupport', pm.getConfigValue('mouseSupport'), true);
@@ -144,7 +144,7 @@ export default class PeppyMeterConfig {
       }
       else {
         const files = readdirSync(folder);
-        dimensions = this.#getDimensionsFromFiles(folder, files, [ '-ext.', '-bgr.' ]);
+        dimensions = this.#getDimensionsFromFiles(folder, files, [ '-ext.', '_ext.', '-bgr.', '_bgr.' ]);
       }
       if (!this.#validationErrors[field] && (!dimensions || !dimensions.width || !dimensions.height)) {
         this.#validationErrors[field] = `Could not obtain valid screen dimensions from '${value}'`;
@@ -158,10 +158,10 @@ export default class PeppyMeterConfig {
         throw Error(this.#validationErrors[field]);
       }
     }
-    else if (field === 'randomInterval') {
+    else if (field === 'changeInterval') {
       delete this.#validationErrors[field];
       if (typeof value !== 'number' || value < 10) {
-        this.#validationErrors[field] = 'Random Meter Interval must be 10 or greater';
+        this.#validationErrors[field] = 'Meter Change Interval must be 10 or greater';
       }
       if (!this.#validationErrors[field] || force) {
         this.#configValues[field] = value;
@@ -257,7 +257,7 @@ export default class PeppyMeterConfig {
     const commitValues: CommitValues = {
       template: checkedFieldValues.template,
       meter: checkedFieldValues.meter.toString(),
-      randomInterval: checkedFieldValues.randomInterval,
+      changeInterval: checkedFieldValues.changeInterval,
       screenWidth: checkedFieldValues.screenWidth as number,
       screenHeight: checkedFieldValues.screenHeight as number,
       useCache: checkedFieldValues.useCache,

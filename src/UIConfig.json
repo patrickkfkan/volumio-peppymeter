@@ -4,22 +4,20 @@
   },
   "sections": [
     {
-      "id": "section_meter_settings",
+      "id": "section_general_settings",
       "element": "section",
-      "label": "TRANSLATE.PEPPYMETER_METER_SETTINGS",
-      "icon": "fa-tachometer",
+      "label": "TRANSLATE.PEPPYMETER_GENERAL_SETTINGS",
+      "icon": "fa-cogs",
       "onSave": {
         "type": "controller",
         "endpoint": "user_interface/peppymeter",
-        "method": "configSaveMeterSettings"
+        "method": "configSaveGeneralSettings"
       },
       "saveButton": {
         "label": "TRANSLATE.PEPPYMETER_SAVE",
         "data": [
           "startDelay",
           "template",
-          "meter",
-          "randomInterval",
           "useCache",
           "smoothBufferSize",
           "mouseSupport",
@@ -50,13 +48,6 @@
               "label": ""
             }
           ]
-        },
-        {
-          "id": "randomInterval",
-          "element": "input",
-          "type": "number",
-          "label": "TRANSLATE.PEPPYMETER_RANDOM_INTERVAL",
-          "value": 60
         },
         {
           "id": "useCache",
@@ -115,6 +106,69 @@
           "visibleIf": {
             "field": "fifoPathType",
             "value": "manual"
+          }
+        }
+      ]
+    },
+    {
+      "id": "section_meter_settings",
+      "element": "section",
+      "label": "TRANSLATE.PEPPYMETER_METER_SETTINGS",
+      "icon": "fa-tachometer",
+      "onSave": {
+        "type": "controller",
+        "endpoint": "user_interface/peppymeter",
+        "method": "configSaveMeterSettings"
+      },
+      "saveButton": {
+        "label": "TRANSLATE.PEPPYMETER_SAVE",
+        "data": [
+          "meter",
+          "listMeters",
+          "randomChangeInterval",
+          "listChangeInterval"
+        ]
+      },
+      "content": [
+        {
+          "id": "meter",
+          "element": "select",
+          "label": "TRANSLATE.PEPPYMETER_METER",
+          "value": {
+            "value": "", 
+            "label": ""
+          },
+          "options": []
+        },
+        {
+          "id": "listMeters",
+          "element": "input",
+          "type": "text",
+          "label": "TRANSLATE.PEPPYMETER_LIST_METERS",
+          "value": "",
+          "visibleIf": {
+            "field": "meter",
+            "value": "/LIST/"
+          }
+        },
+        {
+          "id": "randomChangeInterval",
+          "element": "input",
+          "type": "number",
+          "label": "TRANSLATE.PEPPYMETER_CHANGE_INTERVAL",
+          "visibleIf": {
+            "field": "meter",
+            "value": "random"
+          }
+        },
+        {
+          "id": "listChangeInterval",
+          "element": "input",
+          "type": "number",
+          "label": "TRANSLATE.PEPPYMETER_CHANGE_INTERVAL",
+          "visibleIf": {
+            "field": "meter",
+            "value": "/LIST/"
           }
         }
       ]

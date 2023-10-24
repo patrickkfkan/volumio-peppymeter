@@ -1,9 +1,9 @@
 import { PluginConfigSchema } from './PluginConfig';
-type ConfigKey = 'template' | 'meter' | 'randomInterval' | 'useCache' | 'smoothBufferSize' | 'mouseSupport' | 'font' | 'fifoPath' | 'screenWidth' | 'screenHeight';
+type ConfigKey = 'template' | 'meter' | 'changeInterval' | 'useCache' | 'smoothBufferSize' | 'mouseSupport' | 'font' | 'fifoPath' | 'screenWidth' | 'screenHeight';
 interface ConfigValues {
     template: PluginConfigSchema['template']['defaultValue'];
     meter: PluginConfigSchema['meter']['defaultValue'];
-    randomInterval: PluginConfigSchema['randomInterval']['defaultValue'];
+    changeInterval: PluginConfigSchema['changeInterval']['defaultValue'];
     useCache: PluginConfigSchema['useCache']['defaultValue'];
     smoothBufferSize: PluginConfigSchema['smoothBufferSize']['defaultValue'];
     mouseSupport: PluginConfigSchema['mouseSupport']['defaultValue'];

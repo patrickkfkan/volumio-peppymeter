@@ -9,6 +9,7 @@ declare class ControllerPeppyAlsaPipe {
     onVolumioStart(): any;
     onStart(): any;
     onStop(): any;
+    configSaveGeneralSettings(data: Record<string, any>): Promise<void>;
     configSaveMeterSettings(data: Record<string, any>): Promise<void>;
 }
 export = ControllerPeppyAlsaPipe;

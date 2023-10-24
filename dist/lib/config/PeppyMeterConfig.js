@@ -27,7 +27,7 @@ const FontHelper_1 = require("../utils/FontHelper");
 const CONFIG_KEYS = [
     'template',
     'meter',
-    'randomInterval',
+    'changeInterval',
     'useCache',
     'smoothBufferSize',
     'mouseSupport',
@@ -39,7 +39,7 @@ const CONFIG_KEYS = [
 const CONFIG_TMPL_KEY_MAP = {
     template: 'TEMPLATE',
     meter: 'METER',
-    randomInterval: 'RANDOM_INTERVAL',
+    changeInterval: 'RANDOM_INTERVAL',
     screenWidth: 'SCREEN_WIDTH',
     screenHeight: 'SCREEN_HEIGHT',
     useCache: 'USE_CACHE',
@@ -61,7 +61,7 @@ class PeppyMeterConfig {
         __classPrivateFieldGet(this, _a, "m", _PeppyMeterConfig_assertConfigTmplLoaded).call(this);
         this.set('template', PeppyMeterContext_1.default.getConfigValue('template'), true);
         this.set('meter', PeppyMeterContext_1.default.getConfigValue('meter'), true);
-        this.set('randomInterval', PeppyMeterContext_1.default.getConfigValue('randomInterval'), true);
+        this.set('changeInterval', PeppyMeterContext_1.default.getConfigValue('changeInterval'), true);
         this.set('useCache', PeppyMeterContext_1.default.getConfigValue('useCache'), true);
         this.set('smoothBufferSize', PeppyMeterContext_1.default.getConfigValue('smoothBufferSize'), true);
         this.set('mouseSupport', PeppyMeterContext_1.default.getConfigValue('mouseSupport'), true);
@@ -93,7 +93,7 @@ class PeppyMeterConfig {
             }
             else {
                 const files = (0, fs_1.readdirSync)(folder);
-                dimensions = __classPrivateFieldGet(this, _a, "m", _PeppyMeterConfig_getDimensionsFromFiles).call(this, folder, files, ['-ext.', '-bgr.']);
+                dimensions = __classPrivateFieldGet(this, _a, "m", _PeppyMeterConfig_getDimensionsFromFiles).call(this, folder, files, ['-ext.', '_ext.', '-bgr.', '_bgr.']);
             }
             if (!__classPrivateFieldGet(this, _a, "f", _PeppyMeterConfig_validationErrors)[field] && (!dimensions || !dimensions.width || !dimensions.height)) {
                 __classPrivateFieldGet(this, _a, "f", _PeppyMeterConfig_validationErrors)[field] = `Could not obtain valid screen dimensions from '${value}'`;
@@ -107,10 +107,10 @@ class PeppyMeterConfig {
                 throw Error(__classPrivateFieldGet(this, _a, "f", _PeppyMeterConfig_validationErrors)[field]);
             }
         }
-        else if (field === 'randomInterval') {
+        else if (field === 'changeInterval') {
             delete __classPrivateFieldGet(this, _a, "f", _PeppyMeterConfig_validationErrors)[field];
             if (typeof value !== 'number' || value < 10) {
-                __classPrivateFieldGet(this, _a, "f", _PeppyMeterConfig_validationErrors)[field] = 'Random Meter Interval must be 10 or greater';
+                __classPrivateFieldGet(this, _a, "f", _PeppyMeterConfig_validationErrors)[field] = 'Meter Change Interval must be 10 or greater';
             }
             if (!__classPrivateFieldGet(this, _a, "f", _PeppyMeterConfig_validationErrors)[field] || force) {
                 __classPrivateFieldGet(this, _a, "f", _PeppyMeterConfig_configValues)[field] = value;
@@ -172,7 +172,7 @@ class PeppyMeterConfig {
         const commitValues = {
             template: checkedFieldValues.template,
             meter: checkedFieldValues.meter.toString(),
-            randomInterval: checkedFieldValues.randomInterval,
+            changeInterval: checkedFieldValues.changeInterval,
             screenWidth: checkedFieldValues.screenWidth,
             screenHeight: checkedFieldValues.screenHeight,
             useCache: checkedFieldValues.useCache,

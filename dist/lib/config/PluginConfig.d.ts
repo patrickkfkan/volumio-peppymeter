@@ -23,8 +23,9 @@ export interface FontDef extends FontConfig {
 export interface PluginConfigSchema {
     startDelay: PluginConfigSchemaEntry<number>;
     template: PluginConfigSchemaEntry<string>;
+    meterType: PluginConfigSchemaEntry<'random' | 'list' | 'single'>;
     meter: PluginConfigSchemaEntry<'random' | String>;
-    randomInterval: PluginConfigSchemaEntry<number>;
+    changeInterval: PluginConfigSchemaEntry<number>;
     useCache: PluginConfigSchemaEntry<boolean>;
     smoothBufferSize: PluginConfigSchemaEntry<number>;
     mouseSupport: PluginConfigSchemaEntry<boolean>;

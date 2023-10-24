@@ -9,8 +9,9 @@ const defaultFontConfig = {
 exports.PLUGIN_CONFIG_SCHEMA = {
     startDelay: { defaultValue: 3, json: false },
     template: { defaultValue: '', json: false },
+    meterType: { defaultValue: 'random', json: false },
     meter: { defaultValue: 'random', json: false },
-    randomInterval: { defaultValue: 60, json: false },
+    changeInterval: { defaultValue: 60, json: false },
     useCache: { defaultValue: false, json: false },
     smoothBufferSize: { defaultValue: 8, json: false },
     mouseSupport: { defaultValue: true, json: false },
