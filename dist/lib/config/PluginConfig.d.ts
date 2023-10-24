@@ -4,6 +4,11 @@ export interface FIFOPathConfig {
     type: 'peppyAlsaPlugin' | 'manual';
     path: string;
 }
+export interface ScreenSizeConfig {
+    type: 'auto' | 'manual';
+    width: number;
+    height: number;
+}
 export interface PluginConfigSchemaEntry<T, U = false> {
     defaultValue: T;
     json: U;
@@ -26,6 +31,7 @@ export interface PluginConfigSchema {
     meterType: PluginConfigSchemaEntry<'random' | 'list' | 'single'>;
     meter: PluginConfigSchemaEntry<'random' | String>;
     changeInterval: PluginConfigSchemaEntry<number>;
+    screenSize: PluginConfigSchemaEntry<ScreenSizeConfig, true>;
     useCache: PluginConfigSchemaEntry<boolean>;
     smoothBufferSize: PluginConfigSchemaEntry<number>;
     mouseSupport: PluginConfigSchemaEntry<boolean>;

@@ -1,16 +1,15 @@
 import { PluginConfigSchema } from './PluginConfig';
-type ConfigKey = 'template' | 'meter' | 'changeInterval' | 'useCache' | 'smoothBufferSize' | 'mouseSupport' | 'font' | 'fifoPath' | 'screenWidth' | 'screenHeight';
+type ConfigKey = 'template' | 'meter' | 'changeInterval' | 'screenSize' | 'useCache' | 'smoothBufferSize' | 'mouseSupport' | 'font' | 'fifoPath';
 interface ConfigValues {
     template: PluginConfigSchema['template']['defaultValue'];
     meter: PluginConfigSchema['meter']['defaultValue'];
     changeInterval: PluginConfigSchema['changeInterval']['defaultValue'];
+    screenSize: PluginConfigSchema['screenSize']['defaultValue'];
     useCache: PluginConfigSchema['useCache']['defaultValue'];
     smoothBufferSize: PluginConfigSchema['smoothBufferSize']['defaultValue'];
     mouseSupport: PluginConfigSchema['mouseSupport']['defaultValue'];
     font: PluginConfigSchema['font']['defaultValue'];
     fifoPath: PluginConfigSchema['fifoPath']['defaultValue'];
-    screenWidth: number | null;
-    screenHeight: number | null;
 }
 export default class PeppyMeterConfig {
     #private;

@@ -18,6 +18,9 @@
         "data": [
           "startDelay",
           "template",
+          "screenSize",
+          "screenWidth",
+          "screenHeight",
           "useCache",
           "smoothBufferSize",
           "mouseSupport",
@@ -48,6 +51,47 @@
               "label": ""
             }
           ]
+        },
+        {
+          "id": "screenSize",
+          "element": "select",
+          "label": "TRANSLATE.PEPPYMETER_SCREEN_SIZE",
+          "value": {
+            "value": "auto",
+            "label": "TRANSLATE.PEPPYMETER_AUTO"
+          },
+          "options": [
+            {
+              "value": "auto",
+              "label": "TRANSLATE.PEPPYMETER_AUTO"
+            },
+            {
+              "value": "manual",
+              "label": "TRANSLATE.PEPPYMETER_MANUAL"
+            } 
+          ]
+        },
+        {
+          "id": "screenWidth",
+          "element": "input",
+          "type": "number",
+          "label": "TRANSLATE.PEPPYMETER_WIDTH",
+          "value": "",
+          "visibleIf": {
+            "field": "screenSize",
+            "value": "manual"
+          }
+        },
+        {
+          "id": "screenHeight",
+          "element": "input",
+          "type": "number",
+          "label": "TRANSLATE.PEPPYMETER_HEIGHT",
+          "value": "",
+          "visibleIf": {
+            "field": "screenSize",
+            "value": "manual"
+          }
         },
         {
           "id": "useCache",

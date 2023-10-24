@@ -28,13 +28,12 @@ const CONFIG_KEYS = [
     'template',
     'meter',
     'changeInterval',
+    'screenSize',
     'useCache',
     'smoothBufferSize',
     'mouseSupport',
     'font',
-    'fifoPath',
-    'screenWidth',
-    'screenHeight'
+    'fifoPath'
 ];
 const CONFIG_TMPL_KEY_MAP = {
     template: 'TEMPLATE',
@@ -62,6 +61,7 @@ class PeppyMeterConfig {
         this.set('template', PeppyMeterContext_1.default.getConfigValue('template'), true);
         this.set('meter', PeppyMeterContext_1.default.getConfigValue('meter'), true);
         this.set('changeInterval', PeppyMeterContext_1.default.getConfigValue('changeInterval'), true);
+        this.set('screenSize', PeppyMeterContext_1.default.getConfigValue('screenSize'), true);
         this.set('useCache', PeppyMeterContext_1.default.getConfigValue('useCache'), true);
         this.set('smoothBufferSize', PeppyMeterContext_1.default.getConfigValue('smoothBufferSize'), true);
         this.set('mouseSupport', PeppyMeterContext_1.default.getConfigValue('mouseSupport'), true);
@@ -84,24 +84,14 @@ class PeppyMeterConfig {
         if (field === 'template') {
             delete __classPrivateFieldGet(this, _a, "f", _PeppyMeterConfig_validationErrors)[field];
             const folder = path_1.default.resolve(Constants_1.METER_TEMPLATE_DIR, value);
-            let dimensions = null;
             if (!folder) {
                 __classPrivateFieldGet(this, _a, "f", _PeppyMeterConfig_validationErrors)[field] = 'No folder specified';
             }
             else if (!(0, System_1.dirExists)(folder)) {
                 __classPrivateFieldGet(this, _a, "f", _PeppyMeterConfig_validationErrors)[field] = `Folder '${value}' does not exist`;
             }
-            else {
-                const files = (0, fs_1.readdirSync)(folder);
-                dimensions = __classPrivateFieldGet(this, _a, "m", _PeppyMeterConfig_getDimensionsFromFiles).call(this, folder, files, ['-ext.', '_ext.', '-bgr.', '_bgr.']);
-            }
-            if (!__classPrivateFieldGet(this, _a, "f", _PeppyMeterConfig_validationErrors)[field] && (!dimensions || !dimensions.width || !dimensions.height)) {
-                __classPrivateFieldGet(this, _a, "f", _PeppyMeterConfig_validationErrors)[field] = `Could not obtain valid screen dimensions from '${value}'`;
-            }
             if (!__classPrivateFieldGet(this, _a, "f", _PeppyMeterConfig_validationErrors)[field] || force) {
                 __classPrivateFieldGet(this, _a, "f", _PeppyMeterConfig_configValues)[field] = value;
-                this.set('screenWidth', dimensions?.width || null);
-                this.set('screenHeight', dimensions?.height || null);
             }
             else {
                 throw Error(__classPrivateFieldGet(this, _a, "f", _PeppyMeterConfig_validationErrors)[field]);
@@ -111,6 +101,19 @@ class PeppyMeterConfig {
             delete __classPrivateFieldGet(this, _a, "f", _PeppyMeterConfig_validationErrors)[field];
             if (typeof value !== 'number' || value < 10) {
                 __classPrivateFieldGet(this, _a, "f", _PeppyMeterConfig_validationErrors)[field] = 'Meter Change Interval must be 10 or greater';
+            }
+            if (!__classPrivateFieldGet(this, _a, "f", _PeppyMeterConfig_validationErrors)[field] || force) {
+                __classPrivateFieldGet(this, _a, "f", _PeppyMeterConfig_configValues)[field] = value;
+            }
+            else {
+                throw Error(__classPrivateFieldGet(this, _a, "f", _PeppyMeterConfig_validationErrors)[field]);
+            }
+        }
+        else if (field === 'screenSize') {
+            delete __classPrivateFieldGet(this, _a, "f", _PeppyMeterConfig_validationErrors)[field];
+            const screenSizeConfig = value;
+            if (screenSizeConfig.type === 'manual' && (screenSizeConfig.width <= 0 || screenSizeConfig.height <= 0)) {
+                __classPrivateFieldGet(this, _a, "f", _PeppyMeterConfig_validationErrors)[field] = 'Invalid screen dimensions';
             }
             if (!__classPrivateFieldGet(this, _a, "f", _PeppyMeterConfig_validationErrors)[field] || force) {
                 __classPrivateFieldGet(this, _a, "f", _PeppyMeterConfig_configValues)[field] = value;
@@ -155,6 +158,22 @@ class PeppyMeterConfig {
         else if (!FontHelper_1.FontHelper.checkPaths(fontDef)) {
             throw Error(`Font path missing for '${fontDef.shortName}'`);
         }
+        const screenSizeConfig = checkedFieldValues['screenSize'];
+        const screenSize = {};
+        if (screenSizeConfig.type === 'manual') {
+            screenSize.width = screenSizeConfig.width;
+            screenSize.height = screenSizeConfig.height;
+        }
+        else {
+            const folder = path_1.default.resolve(Constants_1.METER_TEMPLATE_DIR, checkedFieldValues['template']);
+            const files = (0, fs_1.readdirSync)(folder);
+            const dimensions = __classPrivateFieldGet(this, _a, "m", _PeppyMeterConfig_getDimensionsFromFiles).call(this, folder, files, ['-ext.', '_ext.', '-bgr.', '_bgr.']);
+            if (!dimensions || !dimensions.width || !dimensions.height) {
+                throw Error(`Could not obtain valid screen dimensions from ${checkedFieldValues['template']}`);
+            }
+            screenSize.width = dimensions.width;
+            screenSize.height = dimensions.height;
+        }
         const fifoPathConfig = checkedFieldValues['fifoPath'];
         let fifoPath = null;
         if (fifoPathConfig.type === 'manual') {
@@ -173,8 +192,8 @@ class PeppyMeterConfig {
             template: checkedFieldValues.template,
             meter: checkedFieldValues.meter.toString(),
             changeInterval: checkedFieldValues.changeInterval,
-            screenWidth: checkedFieldValues.screenWidth,
-            screenHeight: checkedFieldValues.screenHeight,
+            screenWidth: screenSize.width,
+            screenHeight: screenSize.height,
             useCache: checkedFieldValues.useCache,
             smoothBufferSize: checkedFieldValues.smoothBufferSize,
             mouseSupport: checkedFieldValues.mouseSupport,

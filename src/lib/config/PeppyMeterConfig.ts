@@ -4,7 +4,7 @@ import imageSize from 'image-size';
 import deepEqual from 'deep-equal';
 import pm from '../PeppyMeterContext';
 import path from 'path';
-import { FIFOPathConfig, PluginConfigSchema } from './PluginConfig';
+import { FIFOPathConfig, PluginConfigSchema, ScreenSizeConfig } from './PluginConfig';
 import { METER_TEMPLATE_DIR, PEPPYMETER_CONFIG_FILE, PEPPYMETER_CONFIG_TEMPLATE_FILE } from '../utils/Constants';
 import { PeppyAlsaPipePluginListener } from './PeppyAlsaPipePluginListener';
 import { FontHelper } from '../utils/FontHelper';
@@ -13,38 +13,35 @@ type ConfigKey =
   'template' |
   'meter' |
   'changeInterval' |
+  'screenSize' |
   'useCache' |
   'smoothBufferSize' |
   'mouseSupport' |
   'font' |
-  'fifoPath' |
-  'screenWidth' |
-  'screenHeight';
+  'fifoPath';
 
 const CONFIG_KEYS: Array<ConfigKey> = [
   'template',
   'meter',
   'changeInterval',
+  'screenSize',
   'useCache',
   'smoothBufferSize',
   'mouseSupport',
   'font',
-  'fifoPath',
-  'screenWidth',
-  'screenHeight'
+  'fifoPath'
 ];
 
 interface ConfigValues {
   template: PluginConfigSchema['template']['defaultValue'],
   meter: PluginConfigSchema['meter']['defaultValue'],
   changeInterval: PluginConfigSchema['changeInterval']['defaultValue'],
+  screenSize: PluginConfigSchema['screenSize']['defaultValue'],
   useCache: PluginConfigSchema['useCache']['defaultValue'],
   smoothBufferSize: PluginConfigSchema['smoothBufferSize']['defaultValue'],
   mouseSupport: PluginConfigSchema['mouseSupport']['defaultValue'],
   font: PluginConfigSchema['font']['defaultValue'],
-  fifoPath: PluginConfigSchema['fifoPath']['defaultValue'],
-  screenWidth: number | null,
-  screenHeight: number | null
+  fifoPath: PluginConfigSchema['fifoPath']['defaultValue']
 }
 
 interface Dimensions {
@@ -103,6 +100,7 @@ export default class PeppyMeterConfig {
     this.set('template', pm.getConfigValue('template'), true);
     this.set('meter', pm.getConfigValue('meter'), true);
     this.set('changeInterval', pm.getConfigValue('changeInterval'), true);
+    this.set('screenSize', pm.getConfigValue('screenSize'), true);
     this.set('useCache', pm.getConfigValue('useCache'), true);
     this.set('smoothBufferSize', pm.getConfigValue('smoothBufferSize'), true);
     this.set('mouseSupport', pm.getConfigValue('mouseSupport'), true);
@@ -135,24 +133,14 @@ export default class PeppyMeterConfig {
     if (field === 'template') {
       delete this.#validationErrors[field];
       const folder = path.resolve(METER_TEMPLATE_DIR, value as any);
-      let dimensions: Dimensions | null = null;
       if (!folder) {
         this.#validationErrors[field] = 'No folder specified';
       }
       else if (!dirExists(folder)) {
         this.#validationErrors[field] = `Folder '${value}' does not exist`;
       }
-      else {
-        const files = readdirSync(folder);
-        dimensions = this.#getDimensionsFromFiles(folder, files, [ '-ext.', '_ext.', '-bgr.', '_bgr.' ]);
-      }
-      if (!this.#validationErrors[field] && (!dimensions || !dimensions.width || !dimensions.height)) {
-        this.#validationErrors[field] = `Could not obtain valid screen dimensions from '${value}'`;
-      }
       if (!this.#validationErrors[field] || force) {
         this.#configValues[field] = value;
-        this.set('screenWidth', dimensions?.width || null);
-        this.set('screenHeight', dimensions?.height || null);
       }
       else {
         throw Error(this.#validationErrors[field]);
@@ -162,6 +150,19 @@ export default class PeppyMeterConfig {
       delete this.#validationErrors[field];
       if (typeof value !== 'number' || value < 10) {
         this.#validationErrors[field] = 'Meter Change Interval must be 10 or greater';
+      }
+      if (!this.#validationErrors[field] || force) {
+        this.#configValues[field] = value;
+      }
+      else {
+        throw Error(this.#validationErrors[field]);
+      }
+    }
+    else if (field === 'screenSize') {
+      delete this.#validationErrors[field];
+      const screenSizeConfig = value as ScreenSizeConfig;
+      if (screenSizeConfig.type === 'manual' && (screenSizeConfig.width <= 0 || screenSizeConfig.height <= 0)) {
+        this.#validationErrors[field] = 'Invalid screen dimensions';
       }
       if (!this.#validationErrors[field] || force) {
         this.#configValues[field] = value;
@@ -239,6 +240,23 @@ export default class PeppyMeterConfig {
       throw Error(`Font path missing for '${fontDef.shortName}'`);
     }
 
+    const screenSizeConfig = checkedFieldValues['screenSize'];
+    const screenSize: Dimensions = {};
+    if (screenSizeConfig.type === 'manual') {
+      screenSize.width = screenSizeConfig.width;
+      screenSize.height = screenSizeConfig.height;
+    }
+    else {
+      const folder = path.resolve(METER_TEMPLATE_DIR, checkedFieldValues['template']);
+      const files = readdirSync(folder);
+      const dimensions = this.#getDimensionsFromFiles(folder, files, [ '-ext.', '_ext.', '-bgr.', '_bgr.' ]);
+      if (!dimensions || !dimensions.width || !dimensions.height) {
+        throw Error(`Could not obtain valid screen dimensions from ${checkedFieldValues['template']}`);
+      }
+      screenSize.width = dimensions.width;
+      screenSize.height = dimensions.height;
+    }
+
     const fifoPathConfig = checkedFieldValues['fifoPath'];
     let fifoPath: string | null = null;
     if (fifoPathConfig.type === 'manual') {
@@ -258,8 +276,8 @@ export default class PeppyMeterConfig {
       template: checkedFieldValues.template,
       meter: checkedFieldValues.meter.toString(),
       changeInterval: checkedFieldValues.changeInterval,
-      screenWidth: checkedFieldValues.screenWidth as number,
-      screenHeight: checkedFieldValues.screenHeight as number,
+      screenWidth: screenSize.width as number,
+      screenHeight: screenSize.height as number,
       useCache: checkedFieldValues.useCache,
       smoothBufferSize: checkedFieldValues.smoothBufferSize,
       mouseSupport: checkedFieldValues.mouseSupport,

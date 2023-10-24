@@ -8,6 +8,12 @@ export interface FIFOPathConfig {
   path: string;
 }
 
+export interface ScreenSizeConfig {
+  type: 'auto' | 'manual';
+  width: number;
+  height: number;
+}
+
 export interface PluginConfigSchemaEntry<T, U = false> {
   defaultValue: T;
   json: U;
@@ -33,6 +39,7 @@ export interface PluginConfigSchema {
   meterType: PluginConfigSchemaEntry<'random' | 'list' | 'single'>;
   meter: PluginConfigSchemaEntry<'random' | String>;
   changeInterval: PluginConfigSchemaEntry<number>;
+  screenSize: PluginConfigSchemaEntry<ScreenSizeConfig, true>;
   useCache: PluginConfigSchemaEntry<boolean>;
   smoothBufferSize: PluginConfigSchemaEntry<number>;
   mouseSupport: PluginConfigSchemaEntry<boolean>;
@@ -51,6 +58,7 @@ export const PLUGIN_CONFIG_SCHEMA: PluginConfigSchema = {
   meterType: { defaultValue: 'random', json: false },
   meter: { defaultValue: 'random', json: false},
   changeInterval: { defaultValue: 60, json: false},
+  screenSize: { defaultValue: { type: 'auto', width: 0, height: 0 }, json: true },
   useCache: { defaultValue: false, json: false},
   smoothBufferSize: { defaultValue: 8, json: false},
   mouseSupport: { defaultValue: true, json: false },

@@ -92,12 +92,18 @@ class ControllerPeppyAlsaPipe {
             type: parsed.fifoPathType,
             path: parsed.fifoPath
         };
+        const screenSizeConfig = {
+            type: parsed.screenSize,
+            width: parsed.screenWidth !== '' ? parseInt(parsed.screenWidth, 10) : 0,
+            height: parsed.screenHeight !== '' ? parseInt(parsed.screenHeight, 10) : 0
+        };
         const templateChanged = PeppyMeterContext_1.default.getConfigValue('template') !== parsed.template;
         try {
             PeppyMeterConfig_1.default.set('template', parsed.template);
             if (templateChanged) {
                 PeppyMeterConfig_1.default.set('meter', 'random');
             }
+            PeppyMeterConfig_1.default.set('screenSize', screenSizeConfig);
             PeppyMeterConfig_1.default.set('useCache', parsed.useCache);
             PeppyMeterConfig_1.default.set('smoothBufferSize', parsed.smoothBufferSize);
             PeppyMeterConfig_1.default.set('mouseSupport', parsed.mouseSupport);
@@ -114,6 +120,7 @@ class ControllerPeppyAlsaPipe {
             PeppyMeterContext_1.default.setConfigValue('meterType', 'random');
             PeppyMeterContext_1.default.setConfigValue('meter', 'random');
         }
+        PeppyMeterContext_1.default.setConfigValue('screenSize', screenSizeConfig);
         PeppyMeterContext_1.default.setConfigValue('useCache', parsed.useCache);
         PeppyMeterContext_1.default.setConfigValue('smoothBufferSize', parsed.smoothBufferSize);
         PeppyMeterContext_1.default.setConfigValue('mouseSupport', parsed.mouseSupport);
@@ -201,6 +208,7 @@ _ControllerPeppyAlsaPipe_context = new WeakMap(), _ControllerPeppyAlsaPipe_confi
      * General conf
      */
     const template = PeppyMeterContext_1.default.getConfigValue('template');
+    const screenSize = PeppyMeterContext_1.default.getConfigValue('screenSize');
     const fontConfig = PeppyMeterContext_1.default.getConfigValue('font');
     const fifoPathConfig = PeppyMeterContext_1.default.getConfigValue('fifoPath');
     generalUIConf.content.startDelay.value = PeppyMeterContext_1.default.getConfigValue('startDelay');
@@ -212,6 +220,20 @@ _ControllerPeppyAlsaPipe_context = new WeakMap(), _ControllerPeppyAlsaPipe_confi
         value: t,
         label: t
     }));
+    if (screenSize.type === 'auto') {
+        generalUIConf.content.screenSize.value = {
+            value: 'auto',
+            label: PeppyMeterContext_1.default.getI18n('PEPPYMETER_AUTO')
+        };
+    }
+    else {
+        generalUIConf.content.screenSize.value = {
+            value: 'manual',
+            label: PeppyMeterContext_1.default.getI18n('PEPPYMETER_MANUAL')
+        };
+    }
+    generalUIConf.content.screenWidth.value = screenSize.width > 0 ? screenSize.width : '';
+    generalUIConf.content.screenHeight.value = screenSize.height > 0 ? screenSize.height : '';
     generalUIConf.content.useCache.value = PeppyMeterContext_1.default.getConfigValue('useCache');
     generalUIConf.content.smoothBufferSize.value = PeppyMeterContext_1.default.getConfigValue('smoothBufferSize');
     generalUIConf.content.mouseSupport.value = PeppyMeterContext_1.default.getConfigValue('mouseSupport');

@@ -10,6 +10,9 @@ export type UIConfigSectionContentKeyOf<K extends UIConfigSectionKey> =
   K extends 'section_general_settings' ?
     'startDelay' |
     'template' |
+    'screenSize' |
+    'screenWidth' |
+    'screenHeight' |
     'useCache' |
     'smoothBufferSize' |
     'mouseSupport' |
@@ -29,6 +32,9 @@ export type UIConfigElementOf<K extends UIConfigSectionKey, C extends UIConfigSe
   K extends 'section_general_settings' ? (
     C extends 'startDelay' ? UIConfigInput<K, 'number'> :
     C extends 'template' ? UIConfigSelect<K> :
+    C extends 'screenSize' ? UIConfigSelect<K> :
+    C extends 'screenWidth' ? UIConfigInput<K, 'number'> :
+    C extends 'screenHeight' ? UIConfigInput<K, 'number'> :
     C extends 'useCache' ? UIConfigSwitch<K> :
     C extends 'smoothBufferSize' ? UIConfigInput<K, 'number'> :
     C extends 'mouseSupport' ? UIConfigSwitch<K> :

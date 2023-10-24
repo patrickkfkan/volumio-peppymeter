@@ -11,7 +11,7 @@ import PeppyMeterConfig from './lib/config/PeppyMeterConfig';
 import UIConfigHelper from './lib/config/UIConfigHelper';
 import PeppyMeter from './lib/PeppyMeter';
 import { PeppyAlsaPipePluginListener } from './lib/config/PeppyAlsaPipePluginListener';
-import { FontConfig } from './lib/config/PluginConfig';
+import { FontConfig, ScreenSizeConfig } from './lib/config/PluginConfig';
 import { PREDEFINED_FONTS } from './lib/utils/Constants';
 import { FontHelper } from './lib/utils/FontHelper';
 import { getMeterList, getTemplateFolderList } from './lib/utils/MeterTemplate';
@@ -55,6 +55,7 @@ class ControllerPeppyAlsaPipe {
      * General conf
      */
     const template = pm.getConfigValue('template');
+    const screenSize = pm.getConfigValue('screenSize');
     const fontConfig = pm.getConfigValue('font');
     const fifoPathConfig = pm.getConfigValue('fifoPath');
 
@@ -67,6 +68,22 @@ class ControllerPeppyAlsaPipe {
       value: t,
       label: t
     }));
+
+    if (screenSize.type === 'auto') {
+      generalUIConf.content.screenSize.value = {
+        value: 'auto',
+        label: pm.getI18n('PEPPYMETER_AUTO')
+      };
+    }
+    else {
+      generalUIConf.content.screenSize.value = {
+        value: 'manual',
+        label: pm.getI18n('PEPPYMETER_MANUAL')
+      };
+    }
+    generalUIConf.content.screenWidth.value = screenSize.width > 0 ? screenSize.width : '';
+    generalUIConf.content.screenHeight.value = screenSize.height > 0 ? screenSize.height : '';
+
     generalUIConf.content.useCache.value = pm.getConfigValue('useCache');
     generalUIConf.content.smoothBufferSize.value = pm.getConfigValue('smoothBufferSize');
     generalUIConf.content.mouseSupport.value = pm.getConfigValue('mouseSupport');
@@ -240,12 +257,19 @@ class ControllerPeppyAlsaPipe {
       path: parsed.fifoPath
     };
 
+    const screenSizeConfig: ScreenSizeConfig = {
+      type: parsed.screenSize,
+      width: parsed.screenWidth !== '' ? parseInt(parsed.screenWidth, 10) : 0,
+      height: parsed.screenHeight !== '' ? parseInt(parsed.screenHeight, 10) : 0
+    };
+
     const templateChanged = pm.getConfigValue('template') !== parsed.template;
     try {
       PeppyMeterConfig.set('template', parsed.template);
       if (templateChanged) {
         PeppyMeterConfig.set('meter', 'random');
       }
+      PeppyMeterConfig.set('screenSize', screenSizeConfig);
       PeppyMeterConfig.set('useCache', parsed.useCache);
       PeppyMeterConfig.set('smoothBufferSize', parsed.smoothBufferSize);
       PeppyMeterConfig.set('mouseSupport', parsed.mouseSupport);
@@ -263,6 +287,7 @@ class ControllerPeppyAlsaPipe {
       pm.setConfigValue('meterType', 'random');
       pm.setConfigValue('meter', 'random');
     }
+    pm.setConfigValue('screenSize', screenSizeConfig);
     pm.setConfigValue('useCache', parsed.useCache);
     pm.setConfigValue('smoothBufferSize', parsed.smoothBufferSize);
     pm.setConfigValue('mouseSupport', parsed.mouseSupport);
