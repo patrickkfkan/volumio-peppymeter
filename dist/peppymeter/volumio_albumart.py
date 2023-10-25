@@ -50,7 +50,6 @@ class AlbumartAnimator(Thread):
         
     def run(self):
         """ Thread method. show all title infos and albumart. """
- 		
         def on_push_state(*args):
             # --- volumio-peppymeter: do not exit on pause / stop  -------
             if self.meter_section[EXTENDED_CONF] == True:
@@ -234,10 +233,10 @@ class ImageTitleFactory():
         if hasattr(self, 'playinfo_title'):
             self.titleMem = self.playinfo_title
         # --- volumio-peppymeter: strip_ucs4  -------
-        self.playinfo_title = self.strip_ucs4(play_info['title']) if play_info['title'] is not None else ''
-        self.playinfo_artist = self.strip_ucs4(play_info['artist']) if play_info['artist'] is not None else ''
+        self.playinfo_title = self.strip_ucs4(play_info['title']) if 'title' in play_info and play_info['title'] is not None else ''
+        self.playinfo_artist = self.strip_ucs4(play_info['artist']) if 'artist' in play_info and play_info['artist'] is not None else ''
         self.playinfo_album = self.strip_ucs4(play_info['album']) if 'album' in play_info and play_info['album'] is not None else ''
-        self.playinfo_trackT = play_info['trackType'] if play_info['trackType'] is not None else ''
+        self.playinfo_trackT = play_info['trackType'] if 'trackType' in play_info and play_info['trackType'] is not None else ''
         self.playinfo_sample = play_info['samplerate'] if 'samplerate' in play_info and play_info['samplerate'] is not None else ''
         self.playinfo_depth = play_info['bitdepth'] if 'bitdepth' in play_info and play_info['bitdepth'] is not None else ''
         playinfo_rate = play_info['bitrate'] if 'bitrate' in play_info and play_info['bitrate'] is not None else '' 
@@ -276,11 +275,11 @@ class ImageTitleFactory():
         # webradio has no time info
         # --- volumio-peppymeter: always treat duration=0 as having no time info  -------
         if time_args[2] == 'webradio' or time_args[0] == 0:
-            self.remain = time_args[0] 		
+            self.remain = int(time_args[0])
             if time_args[0] == 0:
                 self.NoTime = True
         else:
-            self.remain = 0 if time_args[0] - self.seek_new <= 0 else time_args[0] - self.seek_new			
+            self.remain = 0 if time_args[0] - self.seek_new <= 0 else int(time_args[0] - self.seek_new)			
         self.timecolor = self.meter_section[TIMECOLOR] if self.remain > 10 else (242,0,0) # red for last 10 seconds
         self.remain = '{:02d}:{:02d}'.format( self.remain // 60, self.remain %60)
 
