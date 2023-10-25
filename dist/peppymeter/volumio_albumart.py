@@ -231,7 +231,7 @@ class ImageTitleFactory():
         # --- volumio-peppymeter: strip_ucs4  -------
         self.playinfo_title = self.strip_ucs4(play_info['title']) if play_info['title'] is not None else ''
         self.playinfo_artist = self.strip_ucs4(play_info['artist']) if play_info['artist'] is not None else ''
-        self.playinfo_album = self.strip_ucs4(play_info['album']) if play_info['album'] is not None else ''
+        self.playinfo_album = self.strip_ucs4(play_info['album']) if 'album' in play_info and play_info['album'] is not None else ''
         self.playinfo_trackT = play_info['trackType'] if play_info['trackType'] is not None else ''
         self.playinfo_sample = play_info['samplerate'] if 'samplerate' in play_info and play_info['samplerate'] is not None else ''
         self.playinfo_depth = play_info['bitdepth'] if 'bitdepth' in play_info and play_info['bitdepth'] is not None else ''
