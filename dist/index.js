@@ -88,6 +88,10 @@ class ControllerPeppyAlsaPipe {
             type: fontType,
             id: fontId
         };
+        const exitOnPauseStopConfig = {
+            enabled: parsed.exitOnPauseStop,
+            delay: parsed.exitOnPauseStopDelay !== '' ? parseInt(parsed.exitOnPauseStopDelay, 10) : 0
+        };
         const fifoPathConfig = {
             type: parsed.fifoPathType,
             path: parsed.fifoPath
@@ -125,6 +129,7 @@ class ControllerPeppyAlsaPipe {
         PeppyMeterContext_1.default.setConfigValue('smoothBufferSize', parsed.smoothBufferSize);
         PeppyMeterContext_1.default.setConfigValue('mouseSupport', parsed.mouseSupport);
         PeppyMeterContext_1.default.setConfigValue('font', fontConfig);
+        PeppyMeterContext_1.default.setConfigValue('exitOnPauseStop', exitOnPauseStopConfig);
         PeppyMeterContext_1.default.setConfigValue('fifoPath', fifoPathConfig);
         PeppyMeterContext_1.default.toast('success', PeppyMeterContext_1.default.getI18n('PEPPYMETER_SETTINGS_SAVED'));
         if (templateChanged) {
@@ -210,6 +215,7 @@ _ControllerPeppyAlsaPipe_context = new WeakMap(), _ControllerPeppyAlsaPipe_confi
     const template = PeppyMeterContext_1.default.getConfigValue('template');
     const screenSize = PeppyMeterContext_1.default.getConfigValue('screenSize');
     const fontConfig = PeppyMeterContext_1.default.getConfigValue('font');
+    const exitOnPauseStop = PeppyMeterContext_1.default.getConfigValue('exitOnPauseStop');
     const fifoPathConfig = PeppyMeterContext_1.default.getConfigValue('fifoPath');
     generalUIConf.content.startDelay.value = PeppyMeterContext_1.default.getConfigValue('startDelay');
     generalUIConf.content.template.value = {
@@ -246,6 +252,8 @@ _ControllerPeppyAlsaPipe_context = new WeakMap(), _ControllerPeppyAlsaPipe_confi
         value: `${f.type}.${f.id}`,
         label: f.name
     }));
+    generalUIConf.content.exitOnPauseStop.value = exitOnPauseStop.enabled;
+    generalUIConf.content.exitOnPauseStopDelay.value = exitOnPauseStop.delay;
     let fifoPathTypeLabel = '';
     switch (fifoPathConfig.type) {
         case 'peppyAlsaPlugin':

@@ -52,51 +52,40 @@ class AlbumartAnimator(Thread):
         """ Thread method. show all title infos and albumart. """
  		
         def on_push_state(*args):
+            # --- volumio-peppymeter: do not exit on pause / stop  -------
+            if self.meter_section[EXTENDED_CONF] == True:
+                # draw albumart
+                if args[0]['albumart'] != self.albumart_mem:
+                    self.albumart_mem = args[0]['albumart']
+                    title_factory.get_albumart_data(self.albumart_mem)
+                    title_factory.render_aa(self.first_run)				
 
-            if args[0]['status'] == 'play':
+                # draw title info
+                title_factory.get_title_data(args[0])
+                title_factory.render_text(self.first_run)
 
-                if self.meter_section[EXTENDED_CONF] == True:
-                    # draw albumart
-                    if args[0]['albumart'] != self.albumart_mem:
-                        self.albumart_mem = args[0]['albumart']
-                        title_factory.get_albumart_data(self.albumart_mem)
-                        title_factory.render_aa(self.first_run)				
+                # draw reamining time, timer is started for countdown  
+                if self.meter_section[TIME_REMAINING_POS]:
+                    duration = args[0]['duration'] if 'duration' in args[0] else 0
+                    seek = args[0]['seek'] if 'seek' in args[0] and args[0]['seek'] is not None else 0
+                    service = args[0]['service'] if 'service' in args[0] else ''					
+                    self.time_args = [duration, seek, service]
+                    self.timer_initial = True
+                    remaining_time()
+                      
+                self.first_run = False
 
-                    # draw title info
-                    title_factory.get_title_data(args[0])
-                    title_factory.render_text(self.first_run)
+            if args[0]['status'] == 'play':               
+                # repeat timer start, initial with duration and seek -> remaining_time 
+                if self.meter_section[TIME_REMAINING_POS]:
+                    try:
+                        timer.start() 
+                    except:
+                        pass
 
-                    # draw reamining time, timer is started for countdown  
-                    if self.meter_section[TIME_REMAINING_POS]:
-                        duration = args[0]['duration'] if 'duration' in args[0] else 0
-                        seek = args[0]['seek'] if 'seek' in args[0] and args[0]['seek'] is not None else 0
-                        service = args[0]['service'] if 'service' in args[0] else ''					
-                        self.time_args = [duration, seek, service]
-
-                        # repeat timer start, initial with duration and seek -> remaining_time 
-                        try:
-                            self.timer_initial = True
-                            timer.start() 
-                        except:
-                            pass
-							
-                    self.first_run = False
-                self.status_mem = 'play'
-
-            # simulate mouse event, if pause pressed
-            elif args[0]['status'] == 'pause' and self.status_mem == 'play':
-                #print ('pause')
-                self.status_mem = 'pause'
-                pg.event.post(pg.event.Event(pg.MOUSEBUTTONUP))
-
-            # simulate mouse event, if stop pressed for webradio
-            elif args[0]['service'] == 'webradio' and args[0]['status'] == 'stop' and self.status_mem == 'play':
-                self.status_mem = 'stop'
-                pg.event.post(pg.event.Event(pg.MOUSEBUTTONUP))
-				
             else:
-                self.status_mem = 'other'
-
+                if self.meter_section[TIME_REMAINING_POS]:
+                    self.timer_initial = True
 				
         def remaining_time():
             title_factory.get_time_data(self.time_args, self.timer_initial)
@@ -117,7 +106,6 @@ class AlbumartAnimator(Thread):
             #timer.cancel()
         
         self.albumart_mem = ''
-        self.status_mem = 'pause'
         self.first_run = True
         self.first_run_digi = True
         timer = RepeatTimer(1, remaining_time)

@@ -17,6 +17,7 @@ exports.PLUGIN_CONFIG_SCHEMA = {
     smoothBufferSize: { defaultValue: 8, json: false },
     mouseSupport: { defaultValue: true, json: false },
     font: { defaultValue: defaultFontConfig, json: true },
+    exitOnPauseStop: { defaultValue: { enabled: true, delay: 0 }, json: true },
     fifoPath: { defaultValue: { type: 'peppyAlsaPlugin', path: '' }, json: true }
 };
 //# sourceMappingURL=PluginConfig.js.map

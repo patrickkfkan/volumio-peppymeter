@@ -17,6 +17,10 @@ export interface FontConfig {
     id: string;
     type: 'predefined' | 'user';
 }
+export interface ExitOnPauseStopConfig {
+    enabled: boolean;
+    delay: number;
+}
 export interface FontDef extends FontConfig {
     name: string;
     shortName: string;
@@ -36,6 +40,7 @@ export interface PluginConfigSchema {
     smoothBufferSize: PluginConfigSchemaEntry<number>;
     mouseSupport: PluginConfigSchemaEntry<boolean>;
     font: PluginConfigSchemaEntry<FontConfig, true>;
+    exitOnPauseStop: PluginConfigSchemaEntry<ExitOnPauseStopConfig, true>;
     fifoPath: PluginConfigSchemaEntry<FIFOPathConfig, true>;
 }
 export declare const PLUGIN_CONFIG_SCHEMA: PluginConfigSchema;

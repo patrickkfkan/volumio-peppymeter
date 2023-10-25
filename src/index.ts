@@ -11,7 +11,7 @@ import PeppyMeterConfig from './lib/config/PeppyMeterConfig';
 import UIConfigHelper from './lib/config/UIConfigHelper';
 import PeppyMeter from './lib/PeppyMeter';
 import { PeppyAlsaPipePluginListener } from './lib/config/PeppyAlsaPipePluginListener';
-import { FontConfig, ScreenSizeConfig } from './lib/config/PluginConfig';
+import { ExitOnPauseStopConfig, FontConfig, ScreenSizeConfig } from './lib/config/PluginConfig';
 import { PREDEFINED_FONTS } from './lib/utils/Constants';
 import { FontHelper } from './lib/utils/FontHelper';
 import { getMeterList, getTemplateFolderList } from './lib/utils/MeterTemplate';
@@ -57,6 +57,7 @@ class ControllerPeppyAlsaPipe {
     const template = pm.getConfigValue('template');
     const screenSize = pm.getConfigValue('screenSize');
     const fontConfig = pm.getConfigValue('font');
+    const exitOnPauseStop = pm.getConfigValue('exitOnPauseStop');
     const fifoPathConfig = pm.getConfigValue('fifoPath');
 
     generalUIConf.content.startDelay.value = pm.getConfigValue('startDelay');
@@ -97,6 +98,9 @@ class ControllerPeppyAlsaPipe {
       value: `${f.type}.${f.id}`,
       label: f.name
     }));
+
+    generalUIConf.content.exitOnPauseStop.value = exitOnPauseStop.enabled;
+    generalUIConf.content.exitOnPauseStopDelay.value = exitOnPauseStop.delay;
 
     let fifoPathTypeLabel = '';
     switch (fifoPathConfig.type) {
@@ -252,6 +256,11 @@ class ControllerPeppyAlsaPipe {
       id: fontId
     };
 
+    const exitOnPauseStopConfig: ExitOnPauseStopConfig = {
+      enabled: parsed.exitOnPauseStop,
+      delay: parsed.exitOnPauseStopDelay !== '' ? parseInt(parsed.exitOnPauseStopDelay, 10) : 0
+    };
+
     const fifoPathConfig = {
       type: parsed.fifoPathType,
       path: parsed.fifoPath
@@ -292,6 +301,7 @@ class ControllerPeppyAlsaPipe {
     pm.setConfigValue('smoothBufferSize', parsed.smoothBufferSize);
     pm.setConfigValue('mouseSupport', parsed.mouseSupport);
     pm.setConfigValue('font', fontConfig);
+    pm.setConfigValue('exitOnPauseStop', exitOnPauseStopConfig);
     pm.setConfigValue('fifoPath', fifoPathConfig);
 
     pm.toast('success', pm.getI18n('PEPPYMETER_SETTINGS_SAVED'));

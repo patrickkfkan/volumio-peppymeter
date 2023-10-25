@@ -25,6 +25,8 @@
           "smoothBufferSize",
           "mouseSupport",
           "font",
+          "exitOnPauseStop",
+          "exitOnPauseStopDelay",
           "fifoPathType",
           "fifoPath"
         ]
@@ -159,6 +161,25 @@
           "visibleIf": {
             "field": "fifoPathType",
             "value": "manual"
+          }
+        },
+        {
+          "id": "exitOnPauseStop",
+          "element": "switch",
+          "label": "TRANSLATE.PEPPYMETER_EXIT_ON_PAUSE_STOP",
+          "doc": "TRANSLATE.PEPPYMETER_DOC_EXIT_ON_PAUSE_STOP",
+          "value": true
+        },
+        {
+          "id": "exitOnPauseStopDelay",
+          "element": "input",
+          "type": "number",
+          "label": "TRANSLATE.PEPPYMETER_EXIT_DELAY",
+          "doc": "TRANSLATE.PEPPYMETER_DOC_EXIT_DELAY",
+          "value": 0,
+          "visibleIf": {
+            "field": "exitOnPauseStop",
+            "value": true
           }
         }
       ]

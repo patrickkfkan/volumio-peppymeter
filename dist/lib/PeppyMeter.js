@@ -13,7 +13,7 @@ var __classPrivateFieldSet = (this && this.__classPrivateFieldSet) || function (
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
-var _a, _PeppyMeter_socket, _PeppyMeter_lastPlayerState, _PeppyMeter_startTimer, _PeppyMeter_command, _PeppyMeter_restarting, _PeppyMeter_initCommand, _PeppyMeter_handleSocketConnect, _PeppyMeter_clearStartTimer, _PeppyMeter_handlePlayerStateChange, _PeppyMeter_start;
+var _a, _PeppyMeter_socket, _PeppyMeter_lastPlayerState, _PeppyMeter_startTimer, _PeppyMeter_exitTimer, _PeppyMeter_command, _PeppyMeter_restarting, _PeppyMeter_initCommand, _PeppyMeter_handleSocketConnect, _PeppyMeter_clearStartTimer, _PeppyMeter_clearExitTimer, _PeppyMeter_handlePlayerStateChange, _PeppyMeter_start;
 Object.defineProperty(exports, "__esModule", { value: true });
 const socket_io_client_1 = __importDefault(require("socket.io-client"));
 const PeppyMeterContext_1 = __importDefault(require("./PeppyMeterContext"));
@@ -31,6 +31,7 @@ class PeppyMeter {
         }
     }
     static async disable() {
+        __classPrivateFieldGet(this, _a, "m", _PeppyMeter_clearExitTimer).call(this);
         __classPrivateFieldGet(this, _a, "m", _PeppyMeter_clearStartTimer).call(this);
         if (__classPrivateFieldGet(this, _a, "f", _PeppyMeter_socket)) {
             __classPrivateFieldGet(this, _a, "f", _PeppyMeter_socket).removeAllListeners();
@@ -70,12 +71,15 @@ class PeppyMeter {
         if (__classPrivateFieldGet(this, _a, "f", _PeppyMeter_restarting)) {
             return;
         }
+        const wasRunning = this.isRunning();
+        const exitOnPauseStop = PeppyMeterContext_1.default.getConfigValue('exitOnPauseStop');
         PeppyMeterContext_1.default.getLogger().info('[peppymeter] PeppyMeter restart begin');
         __classPrivateFieldGet(this, _a, "m", _PeppyMeter_clearStartTimer).call(this);
+        __classPrivateFieldGet(this, _a, "m", _PeppyMeter_clearExitTimer).call(this);
         __classPrivateFieldSet(this, _a, true, "f", _PeppyMeter_restarting);
         await this.stop();
         const state = PeppyMeterContext_1.default.getVolumioState();
-        if (state && state.status === 'play') {
+        if (state && (state.status === 'play' || (!exitOnPauseStop.enabled && wasRunning))) {
             await __classPrivateFieldGet(this, _a, "m", _PeppyMeter_start).call(this, () => {
                 onEnd();
             });
@@ -100,12 +104,21 @@ _a = PeppyMeter, _PeppyMeter_initCommand = function _PeppyMeter_initCommand() {
         clearTimeout(__classPrivateFieldGet(this, _a, "f", _PeppyMeter_startTimer));
         __classPrivateFieldSet(this, _a, null, "f", _PeppyMeter_startTimer);
     }
+}, _PeppyMeter_clearExitTimer = function _PeppyMeter_clearExitTimer() {
+    if (__classPrivateFieldGet(this, _a, "f", _PeppyMeter_exitTimer)) {
+        clearTimeout(__classPrivateFieldGet(this, _a, "f", _PeppyMeter_exitTimer));
+        __classPrivateFieldSet(this, _a, null, "f", _PeppyMeter_exitTimer);
+    }
 }, _PeppyMeter_handlePlayerStateChange = function _PeppyMeter_handlePlayerStateChange(state) {
     if (!this.isEnabled() || __classPrivateFieldGet(this, _a, "f", _PeppyMeter_restarting)) {
         return;
     }
     const lastStateIsPlaying = (__classPrivateFieldGet(this, _a, "f", _PeppyMeter_lastPlayerState) && __classPrivateFieldGet(this, _a, "f", _PeppyMeter_lastPlayerState).status === 'play');
     if (state.status === 'play' && !lastStateIsPlaying) {
+        __classPrivateFieldGet(this, _a, "m", _PeppyMeter_clearExitTimer).call(this);
+        if (__classPrivateFieldGet(this, _a, "f", _PeppyMeter_startTimer)) {
+            return;
+        }
         const timeout = PeppyMeterContext_1.default.getConfigValue('startDelay');
         PeppyMeterContext_1.default.getLogger().info(`[peppymeter] PeppyMeter will start in ${timeout} seconds`);
         __classPrivateFieldSet(this, _a, setTimeout(async () => {
@@ -114,10 +127,20 @@ _a = PeppyMeter, _PeppyMeter_initCommand = function _PeppyMeter_initCommand() {
                 return;
             }
             await __classPrivateFieldGet(this, _a, "m", _PeppyMeter_start).call(this);
+            __classPrivateFieldSet(this, _a, null, "f", _PeppyMeter_startTimer);
         }, timeout * 1000), "f", _PeppyMeter_startTimer);
     }
     else if (state.status !== 'play' && lastStateIsPlaying) {
         __classPrivateFieldGet(this, _a, "m", _PeppyMeter_clearStartTimer).call(this);
+        const exitOnPauseStop = PeppyMeterContext_1.default.getConfigValue('exitOnPauseStop');
+        if (__classPrivateFieldGet(this, _a, "f", _PeppyMeter_exitTimer) || !exitOnPauseStop.enabled) {
+            return;
+        }
+        PeppyMeterContext_1.default.getLogger().info(`[peppymeter] PeppyMeter will exit in ${exitOnPauseStop.delay} seconds`);
+        __classPrivateFieldSet(this, _a, setTimeout(async () => {
+            await this.stop();
+            __classPrivateFieldSet(this, _a, null, "f", _PeppyMeter_exitTimer);
+        }, exitOnPauseStop.delay * 1000), "f", _PeppyMeter_exitTimer);
     }
     __classPrivateFieldSet(this, _a, state, "f", _PeppyMeter_lastPlayerState);
 }, _PeppyMeter_start = async function _PeppyMeter_start(callback) {
@@ -148,6 +171,7 @@ _a = PeppyMeter, _PeppyMeter_initCommand = function _PeppyMeter_initCommand() {
 _PeppyMeter_socket = { value: null };
 _PeppyMeter_lastPlayerState = { value: null };
 _PeppyMeter_startTimer = { value: null };
+_PeppyMeter_exitTimer = { value: null };
 _PeppyMeter_command = { value: __classPrivateFieldGet(_a, _a, "m", _PeppyMeter_initCommand).call(_a) };
 _PeppyMeter_restarting = { value: false };
 //# sourceMappingURL=PeppyMeter.js.map

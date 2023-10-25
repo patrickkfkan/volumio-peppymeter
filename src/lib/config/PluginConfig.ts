@@ -24,6 +24,11 @@ export interface FontConfig {
   type: 'predefined' | 'user'; // Type 'user' not yet implemented
 }
 
+export interface ExitOnPauseStopConfig {
+  enabled: boolean;
+  delay: number;
+}
+
 export interface FontDef extends FontConfig {
   name: string;
   shortName: string;
@@ -44,6 +49,7 @@ export interface PluginConfigSchema {
   smoothBufferSize: PluginConfigSchemaEntry<number>;
   mouseSupport: PluginConfigSchemaEntry<boolean>;
   font: PluginConfigSchemaEntry<FontConfig, true>;
+  exitOnPauseStop: PluginConfigSchemaEntry<ExitOnPauseStopConfig, true>;
   fifoPath: PluginConfigSchemaEntry<FIFOPathConfig, true>;
 }
 
@@ -63,5 +69,6 @@ export const PLUGIN_CONFIG_SCHEMA: PluginConfigSchema = {
   smoothBufferSize: { defaultValue: 8, json: false},
   mouseSupport: { defaultValue: true, json: false },
   font: { defaultValue: defaultFontConfig, json: true },
+  exitOnPauseStop: { defaultValue: { enabled: true, delay: 0 }, json: true },
   fifoPath: { defaultValue: { type: 'peppyAlsaPlugin', path: '' }, json: true}
 };

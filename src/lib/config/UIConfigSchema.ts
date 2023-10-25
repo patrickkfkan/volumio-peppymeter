@@ -17,6 +17,8 @@ export type UIConfigSectionContentKeyOf<K extends UIConfigSectionKey> =
     'smoothBufferSize' |
     'mouseSupport' |
     'font' |
+    'exitOnPauseStop' |
+    'exitOnPauseStopDelay' |
     'fifoPathType' |
     'fifoPath' :
 
@@ -39,6 +41,8 @@ export type UIConfigElementOf<K extends UIConfigSectionKey, C extends UIConfigSe
     C extends 'smoothBufferSize' ? UIConfigInput<K, 'number'> :
     C extends 'mouseSupport' ? UIConfigSwitch<K> :
     C extends 'font' ? UIConfigSelect<K> :
+    C extends 'exitOnPauseStop' ? UIConfigSwitch<K> :
+    C extends 'exitOnPauseStopDelay' ? UIConfigInput<K, 'number'> :
     C extends 'fifoPathType' ? UIConfigSelect<K> :
     C extends 'fifoPath' ? UIConfigInput<K, 'text'> :
     never

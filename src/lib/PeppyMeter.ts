@@ -40,6 +40,7 @@ export default class PeppyMeter {
   static #socket: SocketIOClient.Socket | null = null;
   static #lastPlayerState: PlayerState | null = null;
   static #startTimer: NodeJS.Timeout | null = null;
+  static #exitTimer: NodeJS.Timeout | null = null;
   static #command = this.#initCommand();
   static #restarting = false;
 
@@ -57,6 +58,7 @@ export default class PeppyMeter {
   }
 
   static async disable() {
+    this.#clearExitTimer();
     this.#clearStartTimer();
     if (this.#socket) {
       this.#socket.removeAllListeners();
@@ -81,6 +83,13 @@ export default class PeppyMeter {
     }
   }
 
+  static #clearExitTimer() {
+    if (this.#exitTimer) {
+      clearTimeout(this.#exitTimer);
+      this.#exitTimer = null;
+    }
+  }
+
   static #handlePlayerStateChange(state: PlayerState) {
     if (!this.isEnabled() || this.#restarting) {
       return;
@@ -88,6 +97,10 @@ export default class PeppyMeter {
 
     const lastStateIsPlaying = (this.#lastPlayerState && this.#lastPlayerState.status === 'play');
     if (state.status === 'play' && !lastStateIsPlaying) {
+      this.#clearExitTimer();
+      if (this.#startTimer) {
+        return;
+      }
       const timeout = pm.getConfigValue('startDelay');
       pm.getLogger().info(`[peppymeter] PeppyMeter will start in ${timeout} seconds`);
       this.#startTimer = setTimeout(async () => {
@@ -96,11 +109,20 @@ export default class PeppyMeter {
           return;
         }
         await this.#start();
+        this.#startTimer = null;
       }, timeout * 1000);
-
     }
     else if (state.status !== 'play' && lastStateIsPlaying) {
       this.#clearStartTimer();
+      const exitOnPauseStop = pm.getConfigValue('exitOnPauseStop');
+      if (this.#exitTimer || !exitOnPauseStop.enabled) {
+        return;
+      }
+      pm.getLogger().info(`[peppymeter] PeppyMeter will exit in ${exitOnPauseStop.delay} seconds`);
+      this.#exitTimer = setTimeout(async () => {
+        await this.stop();
+        this.#exitTimer = null;
+      }, exitOnPauseStop.delay * 1000);
     }
 
     this.#lastPlayerState = state;
@@ -168,12 +190,17 @@ export default class PeppyMeter {
     if (this.#restarting) {
       return;
     }
+
+    const wasRunning = this.isRunning();
+    const exitOnPauseStop = pm.getConfigValue('exitOnPauseStop');
+
     pm.getLogger().info('[peppymeter] PeppyMeter restart begin');
     this.#clearStartTimer();
+    this.#clearExitTimer();
     this.#restarting = true;
     await this.stop();
     const state = pm.getVolumioState();
-    if (state && state.status === 'play') {
+    if (state && (state.status === 'play' || (!exitOnPauseStop.enabled && wasRunning))) {
       await this.#start(() => {
         onEnd();
       });
