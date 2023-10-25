@@ -35,12 +35,14 @@
           "element": "input",
           "type": "number",
           "label": "TRANSLATE.PEPPYMETER_START_DELAY",
+          "doc": "TRANSLATE.PEPPYMETER_DOC_START_DELAY",
           "value": 3
         },
         {
           "id": "template",
           "element": "select",
           "label": "TRANSLATE.PEPPYMETER_TEMPLATE",
+          "doc": "TRANSLATE.PEPPYMETER_DOC_TEMPLATE",
           "value": {
             "value": "", 
             "label": ""
@@ -56,6 +58,7 @@
           "id": "screenSize",
           "element": "select",
           "label": "TRANSLATE.PEPPYMETER_SCREEN_SIZE",
+          "doc": "TRANSLATE.PEPPYMETER_DOC_SCREEN_SIZE",
           "value": {
             "value": "auto",
             "label": "TRANSLATE.PEPPYMETER_AUTO"
@@ -76,6 +79,7 @@
           "element": "input",
           "type": "number",
           "label": "TRANSLATE.PEPPYMETER_WIDTH",
+          "doc": "TRANSLATE.PEPPYMETER_DOC_WIDTH",
           "value": "",
           "visibleIf": {
             "field": "screenSize",
@@ -87,6 +91,7 @@
           "element": "input",
           "type": "number",
           "label": "TRANSLATE.PEPPYMETER_HEIGHT",
+          "doc": "TRANSLATE.PEPPYMETER_DOC_HEIGHT",
           "value": "",
           "visibleIf": {
             "field": "screenSize",
@@ -97,6 +102,7 @@
           "id": "useCache",
           "element": "switch",
           "label": "TRANSLATE.PEPPYMETER_USE_CACHE",
+          "description": "TRANSLATE.PEPPYMETER_DOC_USE_CACHE",
           "value": true
         },
         {
@@ -104,6 +110,7 @@
           "element": "input",
           "type": "number",
           "label": "TRANSLATE.PEPPYMETER_SMOOTH_BUFFER_SIZE",
+          "doc": "TRANSLATE.PEPPYMETER_DOC_SMOOTH_BUFFER_SIZE",
           "value": 8
         },
         {
@@ -116,6 +123,7 @@
           "id": "font",
           "element": "select",
           "label": "TRANSLATE.PEPPYMETER_FONT",
+          "doc": "TRANSLATE.PEPPYMETER_DOC_FONT",
           "value": {
             "value": "",
             "label": ""
@@ -126,6 +134,7 @@
           "id": "fifoPathType",
           "element": "select",
           "label": "TRANSLATE.PEPPYMETER_FIFO_PATH_TYPE",
+          "doc": "TRANSLATE.PEPPYMETER_DOC_FIFO_PATH",
           "value": {
             "value": "peppyAlsaPlugin",
             "label": "TRANSLATE.PEPPYMETER_FIFO_PATH_TYPE_PAP"
@@ -189,6 +198,7 @@
           "element": "input",
           "type": "text",
           "label": "TRANSLATE.PEPPYMETER_LIST_METERS",
+          "doc": "TRANSLATE.PEPPYMETER_DOC_LIST_METERS",
           "value": "",
           "visibleIf": {
             "field": "meter",
@@ -200,6 +210,7 @@
           "element": "input",
           "type": "number",
           "label": "TRANSLATE.PEPPYMETER_CHANGE_INTERVAL",
+          "doc": "TRANSLATE.PEPPYMETER_DOC_CHANGE_INTERVAL",
           "visibleIf": {
             "field": "meter",
             "value": "random"
@@ -210,6 +221,7 @@
           "element": "input",
           "type": "number",
           "label": "TRANSLATE.PEPPYMETER_CHANGE_INTERVAL",
+          "doc": "TRANSLATE.PEPPYMETER_DOC_CHANGE_INTERVAL",
           "visibleIf": {
             "field": "meter",
             "value": "/LIST/"
