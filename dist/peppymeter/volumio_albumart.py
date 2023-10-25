@@ -75,17 +75,17 @@ class AlbumartAnimator(Thread):
                       
                 self.first_run = False
 
-            if args[0]['status'] == 'play':               
-                # repeat timer start, initial with duration and seek -> remaining_time 
-                if self.meter_section[TIME_REMAINING_POS]:
-                    try:
-                        timer.start() 
-                    except:
-                        pass
+                if args[0]['status'] == 'play':               
+                    # repeat timer start, initial with duration and seek -> remaining_time 
+                    if self.meter_section[TIME_REMAINING_POS]:
+                        try:
+                            timer.start() 
+                        except:
+                            pass
 
-            else:
-                if self.meter_section[TIME_REMAINING_POS]:
-                    self.timer_initial = True
+                else:
+                    if self.meter_section[TIME_REMAINING_POS]:
+                        self.timer_initial = True
 
             self.status_mem = args[0]['status']
 				
