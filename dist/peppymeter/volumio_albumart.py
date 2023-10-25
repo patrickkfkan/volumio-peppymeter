@@ -64,7 +64,7 @@ class AlbumartAnimator(Thread):
                 title_factory.get_title_data(args[0])
                 title_factory.render_text(self.first_run)
 
-                # draw reamining time, timer is started for countdown  
+                # draw reamining time
                 if self.meter_section[TIME_REMAINING_POS]:
                     duration = args[0]['duration'] if 'duration' in args[0] else 0
                     seek = args[0]['seek'] if 'seek' in args[0] and args[0]['seek'] is not None else 0
@@ -86,12 +86,16 @@ class AlbumartAnimator(Thread):
             else:
                 if self.meter_section[TIME_REMAINING_POS]:
                     self.timer_initial = True
+
+            self.status_mem = args[0]['status']
 				
         def remaining_time():
             title_factory.get_time_data(self.time_args, self.timer_initial)
             title_factory.render_time(self.first_run_digi)
 
-            self.timer_initial = False # countdown without new input values
+            if self.status_mem == 'play':
+                self.timer_initial = False # countdown without new input values
+
             self.first_run_digi = False
 			
         def on_connect():
@@ -106,6 +110,7 @@ class AlbumartAnimator(Thread):
             #timer.cancel()
         
         self.albumart_mem = ''
+        self.status_mem = 'pause'
         self.first_run = True
         self.first_run_digi = True
         timer = RepeatTimer(1, remaining_time)
