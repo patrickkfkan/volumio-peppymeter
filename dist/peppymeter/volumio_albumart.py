@@ -269,7 +269,8 @@ class ImageTitleFactory():
         self.seek_new = seek_current if timer_init else self.seek_new + 1
 
         # webradio has no time info
-        if time_args[2] == 'webradio':
+        # --- volumio-peppymeter: always treat duration=0 as having no time info  -------
+        if time_args[2] == 'webradio' or time_args[0] == 0:
             self.remain = time_args[0] 		
             if time_args[0] == 0:
                 self.NoTime = True
