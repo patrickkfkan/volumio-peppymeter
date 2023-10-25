@@ -1,10 +1,8 @@
 # PeppyMeter plugin for Volumio
 
-***(Still under development. Not yet finalized)***
-
 Volumio plugin for installing the [PeppyMeter](https://github.com/project-owner/PeppyMeter) software VU meter, extended by [2aCD](https://github.com/2aCD-creator) to display now playing data.
 
-This plugin does not install [Peppy ALSA](https://github.com/project-owner/peppyalsa), which is required for providing visualizer data to PeppyMeter. To do so, you may install the companion plugin [Peppy ALSA Pipe](https://github.com/patrickkfkan/volumio-peppy-alsa-pipe).
+This plugin requires [Peppy ALSA](https://github.com/project-owner/peppyalsa) to provide visualizer data to PeppyMeter. To install Peppy ALSA, you may install the complementary plugin [Peppy ALSA Pipe](https://github.com/patrickkfkan/volumio-peppy-alsa-pipe).
 
 This project was derived from the following projects:
 
@@ -13,6 +11,10 @@ This project was derived from the following projects:
 
 Much of the Python code in this project was taken from the above projects, with some minor modifications here and there. Credit is given to the authors of those projects.
 
+## Changelog
+
+0.1.0
+- Initial release
 
 ## License
 
