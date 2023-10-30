@@ -6,6 +6,14 @@ import { PLUGIN_CONFIG_SCHEMA, PluginConfigKey, PluginConfigValue } from './conf
 
 export type I18nKey = keyof typeof I18nSchema;
 
+export enum PluginType {
+  AudioInterface = 'audio_interface',
+  MusicService = 'music_service',
+  SystemController = 'system_controller',
+  SystemHardware = 'system_hardware',
+  UserInterface = 'user_interface'
+}
+
 class PeppyMeterContext {
 
   #data: Record<string, any>;
@@ -114,6 +122,10 @@ class PeppyMeterContext {
 
   getVolumioState() {
     return this.#pluginContext.coreCommand.volumioGetState();
+  }
+
+  getPlugin(pluginType: PluginType, pluginName: string) {
+    return this.#pluginContext.coreCommand.pluginManager.getPlugin(pluginType, pluginName);
   }
 
   callPluginMethod(type: string, name: string, method: string, data: any = undefined) {

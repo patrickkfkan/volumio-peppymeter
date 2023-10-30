@@ -1,4 +1,27 @@
 "use strict";
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
 var __classPrivateFieldSet = (this && this.__classPrivateFieldSet) || function (receiver, state, value, kind, f) {
     if (kind === "m") throw new TypeError("Private method is not writable");
     if (kind === "a" && !f) throw new TypeError("Private accessor was defined without a setter");
@@ -20,7 +43,7 @@ const kew_1 = __importDefault(require("kew"));
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 const v_conf_1 = __importDefault(require("v-conf"));
-const PeppyMeterContext_1 = __importDefault(require("./lib/PeppyMeterContext"));
+const PeppyMeterContext_1 = __importStar(require("./lib/PeppyMeterContext"));
 const Misc_1 = require("./lib/utils/Misc");
 const PeppyMeterConfig_1 = __importDefault(require("./lib/config/PeppyMeterConfig"));
 const UIConfigHelper_1 = __importDefault(require("./lib/config/UIConfigHelper"));
@@ -209,6 +232,7 @@ _ControllerPeppyAlsaPipe_context = new WeakMap(), _ControllerPeppyAlsaPipe_confi
     const generalUIConf = uiconf.section_general_settings;
     const meterUIConf = uiconf.section_meter_settings;
     const meterTemplates = await (0, MeterTemplate_1.getTemplateFolderList)();
+    const hasPeppyAlsaPipe = !!PeppyMeterContext_1.default.getPlugin(PeppyMeterContext_1.PluginType.AudioInterface, 'peppy_alsa_pipe');
     /**
      * General conf
      */
@@ -268,49 +292,60 @@ _ControllerPeppyAlsaPipe_context = new WeakMap(), _ControllerPeppyAlsaPipe_confi
         label: fifoPathTypeLabel
     };
     generalUIConf.content.fifoPath.value = fifoPathConfig.path;
+    if (!hasPeppyAlsaPipe) {
+        generalUIConf.content.fifoPathType.description = `${generalUIConf.content.fifoPathType.doc} ${PeppyMeterContext_1.default.getI18n('PEPPYMETER_RECOMMEND_PEPPY_ALSA_PIPE')}`;
+        delete generalUIConf.content.fifoPathType.doc;
+    }
     /**
      * Meter conf
      */
-    const meterType = PeppyMeterContext_1.default.getConfigValue('meterType');
-    const meter = PeppyMeterContext_1.default.getConfigValue('meter');
-    let meterValue;
-    let meterLabel;
-    if (meterType === 'random') {
-        meterValue = 'random';
-        meterLabel = PeppyMeterContext_1.default.getI18n('PEPPYMETER_RANDOM');
-    }
-    else if (meterType === 'list') {
-        meterValue = '/LIST/';
-        meterLabel = PeppyMeterContext_1.default.getI18n('PEPPYMETER_LIST');
+    if (!template) {
+        meterUIConf.description = PeppyMeterContext_1.default.getI18n('PEPPYMETER_CHOOSE_TEMPLATE_FIRST');
+        delete meterUIConf.saveButton;
+        meterUIConf.content = [];
     }
     else {
-        meterValue = meterLabel = meter.toString();
+        const meterType = PeppyMeterContext_1.default.getConfigValue('meterType');
+        const meter = PeppyMeterContext_1.default.getConfigValue('meter');
+        let meterValue;
+        let meterLabel;
+        if (meterType === 'random') {
+            meterValue = 'random';
+            meterLabel = PeppyMeterContext_1.default.getI18n('PEPPYMETER_RANDOM');
+        }
+        else if (meterType === 'list') {
+            meterValue = '/LIST/';
+            meterLabel = PeppyMeterContext_1.default.getI18n('PEPPYMETER_LIST');
+        }
+        else {
+            meterValue = meterLabel = meter.toString();
+        }
+        meterUIConf.content.meter.value = {
+            value: meterValue,
+            label: meterLabel
+        };
+        const meters = (0, MeterTemplate_1.getMeterList)(template);
+        if (meters.length > 0) {
+            meterUIConf.content.meter.options.push({
+                value: 'random',
+                label: PeppyMeterContext_1.default.getI18n('PEPPYMETER_RANDOM')
+            }, {
+                value: '/LIST/',
+                label: PeppyMeterContext_1.default.getI18n('PEPPYMETER_LIST')
+            }, {
+                value: '/SEPARATOR/',
+                label: '-'.repeat(PeppyMeterContext_1.default.getI18n('PEPPYMETER_RANDOM').length)
+            }, ...meters.map((m) => ({
+                value: m,
+                label: m
+            })));
+        }
+        if (meterType === 'list') {
+            meterUIConf.content.listMeters.value = meter.toString();
+        }
+        meterUIConf.content.randomChangeInterval.value = PeppyMeterContext_1.default.getConfigValue('changeInterval');
+        meterUIConf.content.listChangeInterval.value = PeppyMeterContext_1.default.getConfigValue('changeInterval');
     }
-    meterUIConf.content.meter.value = {
-        value: meterValue,
-        label: meterLabel
-    };
-    const meters = (0, MeterTemplate_1.getMeterList)(template);
-    if (meters.length > 0) {
-        meterUIConf.content.meter.options.push({
-            value: 'random',
-            label: PeppyMeterContext_1.default.getI18n('PEPPYMETER_RANDOM')
-        }, {
-            value: '/LIST/',
-            label: PeppyMeterContext_1.default.getI18n('PEPPYMETER_LIST')
-        }, {
-            value: '/SEPARATOR/',
-            label: '-'.repeat(PeppyMeterContext_1.default.getI18n('PEPPYMETER_RANDOM').length)
-        }, ...meters.map((m) => ({
-            value: m,
-            label: m
-        })));
-    }
-    if (meterType === 'list') {
-        meterUIConf.content.listMeters.value = meter.toString();
-    }
-    meterUIConf.content.randomChangeInterval.value = PeppyMeterContext_1.default.getConfigValue('changeInterval');
-    meterUIConf.content.listChangeInterval.value = PeppyMeterContext_1.default.getConfigValue('changeInterval');
     return uiconf;
 }, _ControllerPeppyAlsaPipe_initPeppyAlsaPipePluginListener = function _ControllerPeppyAlsaPipe_initPeppyAlsaPipePluginListener() {
     if (__classPrivateFieldGet(this, _ControllerPeppyAlsaPipe_peppyAlsaPipePluginListener, "f")) {

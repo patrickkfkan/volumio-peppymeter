@@ -5,7 +5,7 @@ import libQ from 'kew';
 // @ts-ignore
 import vconf from 'v-conf';
 
-import pm from './lib/PeppyMeterContext';
+import pm, { PluginType } from './lib/PeppyMeterContext';
 import { jsPromiseToKew, kewToJSPromise } from './lib/utils/Misc';
 import PeppyMeterConfig from './lib/config/PeppyMeterConfig';
 import UIConfigHelper from './lib/config/UIConfigHelper';
@@ -50,6 +50,7 @@ class ControllerPeppyAlsaPipe {
     const meterUIConf = uiconf.section_meter_settings;
 
     const meterTemplates = await getTemplateFolderList();
+    const hasPeppyAlsaPipe = !!pm.getPlugin(PluginType.AudioInterface, 'peppy_alsa_pipe');
 
     /**
      * General conf
@@ -116,55 +117,66 @@ class ControllerPeppyAlsaPipe {
       label: fifoPathTypeLabel
     };
     generalUIConf.content.fifoPath.value = fifoPathConfig.path;
+    if (!hasPeppyAlsaPipe) {
+      generalUIConf.content.fifoPathType.description = `${generalUIConf.content.fifoPathType.doc} ${pm.getI18n('PEPPYMETER_RECOMMEND_PEPPY_ALSA_PIPE')}`;
+      delete generalUIConf.content.fifoPathType.doc;
+    }
 
     /**
      * Meter conf
      */
-    const meterType = pm.getConfigValue('meterType');
-    const meter = pm.getConfigValue('meter');
-    let meterValue: string;
-    let meterLabel: string;
-    if (meterType === 'random') {
-      meterValue = 'random';
-      meterLabel = pm.getI18n('PEPPYMETER_RANDOM');
-    }
-    else if (meterType === 'list') {
-      meterValue = '/LIST/';
-      meterLabel = pm.getI18n('PEPPYMETER_LIST');
+    if (!template) {
+      meterUIConf.description = pm.getI18n('PEPPYMETER_CHOOSE_TEMPLATE_FIRST');
+      delete meterUIConf.saveButton;
+      meterUIConf.content = [] as any;
     }
     else {
-      meterValue = meterLabel = meter.toString();
+      const meterType = pm.getConfigValue('meterType');
+      const meter = pm.getConfigValue('meter');
+      let meterValue: string;
+      let meterLabel: string;
+      if (meterType === 'random') {
+        meterValue = 'random';
+        meterLabel = pm.getI18n('PEPPYMETER_RANDOM');
+      }
+      else if (meterType === 'list') {
+        meterValue = '/LIST/';
+        meterLabel = pm.getI18n('PEPPYMETER_LIST');
+      }
+      else {
+        meterValue = meterLabel = meter.toString();
+      }
+      meterUIConf.content.meter.value = {
+        value: meterValue,
+        label: meterLabel
+      };
+      const meters = getMeterList(template);
+      if (meters.length > 0) {
+        meterUIConf.content.meter.options.push(
+          {
+            value: 'random',
+            label: pm.getI18n('PEPPYMETER_RANDOM')
+          },
+          {
+            value: '/LIST/',
+            label: pm.getI18n('PEPPYMETER_LIST')
+          },
+          {
+            value: '/SEPARATOR/',
+            label: '-'.repeat(pm.getI18n('PEPPYMETER_RANDOM').length)
+          },
+          ...meters.map((m) => ({
+            value: m,
+            label: m
+          }))
+        );
+      }
+      if (meterType === 'list') {
+        meterUIConf.content.listMeters.value = meter.toString();
+      }
+      meterUIConf.content.randomChangeInterval.value = pm.getConfigValue('changeInterval');
+      meterUIConf.content.listChangeInterval.value = pm.getConfigValue('changeInterval');
     }
-    meterUIConf.content.meter.value = {
-      value: meterValue,
-      label: meterLabel
-    };
-    const meters = getMeterList(template);
-    if (meters.length > 0) {
-      meterUIConf.content.meter.options.push(
-        {
-          value: 'random',
-          label: pm.getI18n('PEPPYMETER_RANDOM')
-        },
-        {
-          value: '/LIST/',
-          label: pm.getI18n('PEPPYMETER_LIST')
-        },
-        {
-          value: '/SEPARATOR/',
-          label: '-'.repeat(pm.getI18n('PEPPYMETER_RANDOM').length)
-        },
-        ...meters.map((m) => ({
-          value: m,
-          label: m
-        }))
-      );
-    }
-    if (meterType === 'list') {
-      meterUIConf.content.listMeters.value = meter.toString();
-    }
-    meterUIConf.content.randomChangeInterval.value = pm.getConfigValue('changeInterval');
-    meterUIConf.content.listChangeInterval.value = pm.getConfigValue('changeInterval');
 
     return uiconf;
   }

@@ -127,14 +127,14 @@ export default class PeppyMeterConfig {
 
   static set<T extends ConfigKey>(field: T, value: ConfigValues[T], force = false) {
     this.#assertConfigTmplLoaded();
-    if (deepEqual(this.#configValues[field], value)) {
+    if (field !== 'template' && deepEqual(this.#configValues[field], value)) {
       return;
     }
     if (field === 'template') {
       delete this.#validationErrors[field];
-      const folder = path.resolve(METER_TEMPLATE_DIR, value as any);
+      const folder = value ? path.resolve(METER_TEMPLATE_DIR, value as any) : null;
       if (!folder) {
-        this.#validationErrors[field] = 'No folder specified';
+        this.#validationErrors[field] = 'Template folder not specified';
       }
       else if (!dirExists(folder)) {
         this.#validationErrors[field] = `Folder '${value}' does not exist`;
@@ -192,8 +192,11 @@ export default class PeppyMeterConfig {
   static commit(dryRun = false) {
     this.#assertConfigTmplLoaded();
 
-    const errFields = Object.keys(this.#validationErrors);
+    const errFields = Object.keys(this.#validationErrors) as ConfigKey[];
     if (errFields.length > 0) {
+      if (errFields.length === 1) {
+        throw Error(this.#validationErrors[errFields[0]]);
+      }
       throw Error(`PeppyMeter config has invalid values for: ${errFields.join(', ')}`);
     }
 

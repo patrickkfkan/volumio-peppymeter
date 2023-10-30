@@ -15,9 +15,18 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 var _PeppyMeterContext_instances, _PeppyMeterContext_data, _PeppyMeterContext_pluginContext, _PeppyMeterContext_pluginConfig, _PeppyMeterContext_i18n, _PeppyMeterContext_i18nDefaults, _PeppyMeterContext_i18CallbackRegistered, _PeppyMeterContext_loadI18n, _PeppyMeterContext_onSystemLanguageChanged;
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.PluginType = void 0;
 const string_format_1 = __importDefault(require("string-format"));
 const fs_extra_1 = __importDefault(require("fs-extra"));
 const PluginConfig_1 = require("./config/PluginConfig");
+var PluginType;
+(function (PluginType) {
+    PluginType["AudioInterface"] = "audio_interface";
+    PluginType["MusicService"] = "music_service";
+    PluginType["SystemController"] = "system_controller";
+    PluginType["SystemHardware"] = "system_hardware";
+    PluginType["UserInterface"] = "user_interface";
+})(PluginType = exports.PluginType || (exports.PluginType = {}));
 class PeppyMeterContext {
     constructor() {
         _PeppyMeterContext_instances.add(this);
@@ -108,6 +117,9 @@ class PeppyMeterContext {
     }
     getVolumioState() {
         return __classPrivateFieldGet(this, _PeppyMeterContext_pluginContext, "f").coreCommand.volumioGetState();
+    }
+    getPlugin(pluginType, pluginName) {
+        return __classPrivateFieldGet(this, _PeppyMeterContext_pluginContext, "f").coreCommand.pluginManager.getPlugin(pluginType, pluginName);
     }
     callPluginMethod(type, name, method, data = undefined) {
         return __classPrivateFieldGet(this, _PeppyMeterContext_pluginContext, "f").coreCommand.executeOnPlugin(type, name, method, data);

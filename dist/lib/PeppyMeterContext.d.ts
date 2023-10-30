@@ -2,6 +2,13 @@ import I18nSchema from '../i18n/strings_en.json';
 import winston from 'winston';
 import { PluginConfigKey, PluginConfigValue } from './config/PluginConfig';
 export type I18nKey = keyof typeof I18nSchema;
+export declare enum PluginType {
+    AudioInterface = "audio_interface",
+    MusicService = "music_service",
+    SystemController = "system_controller",
+    SystemHardware = "system_hardware",
+    UserInterface = "user_interface"
+}
 declare class PeppyMeterContext {
     #private;
     constructor();
@@ -19,6 +26,7 @@ declare class PeppyMeterContext {
     deleteConfigValue(key: string): void;
     setConfigValue<T extends PluginConfigKey>(key: T, value: PluginConfigValue<T>): void;
     getVolumioState(): any;
+    getPlugin(pluginType: PluginType, pluginName: string): any;
     callPluginMethod(type: string, name: string, method: string, data?: any): any;
     getVolumioSharedVars(): any;
     reset(): void;

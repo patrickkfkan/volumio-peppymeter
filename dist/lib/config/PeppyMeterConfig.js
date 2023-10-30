@@ -78,14 +78,14 @@ class PeppyMeterConfig {
     }
     static set(field, value, force = false) {
         __classPrivateFieldGet(this, _a, "m", _PeppyMeterConfig_assertConfigTmplLoaded).call(this);
-        if ((0, deep_equal_1.default)(__classPrivateFieldGet(this, _a, "f", _PeppyMeterConfig_configValues)[field], value)) {
+        if (field !== 'template' && (0, deep_equal_1.default)(__classPrivateFieldGet(this, _a, "f", _PeppyMeterConfig_configValues)[field], value)) {
             return;
         }
         if (field === 'template') {
             delete __classPrivateFieldGet(this, _a, "f", _PeppyMeterConfig_validationErrors)[field];
-            const folder = path_1.default.resolve(Constants_1.METER_TEMPLATE_DIR, value);
+            const folder = value ? path_1.default.resolve(Constants_1.METER_TEMPLATE_DIR, value) : null;
             if (!folder) {
-                __classPrivateFieldGet(this, _a, "f", _PeppyMeterConfig_validationErrors)[field] = 'No folder specified';
+                __classPrivateFieldGet(this, _a, "f", _PeppyMeterConfig_validationErrors)[field] = 'Template folder not specified';
             }
             else if (!(0, System_1.dirExists)(folder)) {
                 __classPrivateFieldGet(this, _a, "f", _PeppyMeterConfig_validationErrors)[field] = `Folder '${value}' does not exist`;
@@ -143,6 +143,9 @@ class PeppyMeterConfig {
         __classPrivateFieldGet(this, _a, "m", _PeppyMeterConfig_assertConfigTmplLoaded).call(this);
         const errFields = Object.keys(__classPrivateFieldGet(this, _a, "f", _PeppyMeterConfig_validationErrors));
         if (errFields.length > 0) {
+            if (errFields.length === 1) {
+                throw Error(__classPrivateFieldGet(this, _a, "f", _PeppyMeterConfig_validationErrors)[errFields[0]]);
+            }
             throw Error(`PeppyMeter config has invalid values for: ${errFields.join(', ')}`);
         }
         const missingFields = CONFIG_KEYS.filter((f) => __classPrivateFieldGet(this, _a, "f", _PeppyMeterConfig_configValues)[f] == undefined);
